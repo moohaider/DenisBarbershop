@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Denis Barbershop</title>
+  <meta name="description" content="Denis Barbershop – Haarschnitte, Bartpflege und Rasuren. Unsere Website ist bald online.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💈</text></svg>">
+  <style>
+    :root {
+      --bg: #f5f1ea;
+      --fg: #1c1a17;
+      --muted: #6b645a;
+      --accent: #a8322d;
+      --line: #d9d1c4;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #141311;
+        --fg: #ede8df;
+        --muted: #9c9488;
+        --accent: #d9534c;
+        --line: #2e2b27;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--fg);
+      font-family: Georgia, "Times New Roman", serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+    main { max-width: 32rem; }
+    .pole { font-size: 2.5rem; margin-bottom: 1.25rem; }
+    .eyebrow {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: .75rem;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: .75rem;
+    }
+    h1 {
+      font-size: clamp(2.25rem, 8vw, 3.5rem);
+      font-weight: normal;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+    }
+    hr {
+      width: 3rem;
+      border: 0;
+      border-top: 2px solid var(--accent);
+      margin: 0 auto 1.5rem;
+    }
+    p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: var(--muted);
+    }
+    footer {
+      position: fixed;
+      bottom: 1.25rem;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="pole" aria-hidden="true">💈</div>
+    <div class="eyebrow">Haarschnitt · Bart · Rasur</div>
+    <h1>Denis Barbershop</h1>
+    <hr>
+    <p>Unsere Website ist bald online.<br>Bis dahin freuen wir uns auf deinen Besuch im Laden.</p>
+  </main>
+  <footer>&copy; <span id="y">2026</span> Denis Barbershop</footer>
+  <script>document.getElementById('y').textContent = new Date().getFullYear();</script>
+</body>
+</html>

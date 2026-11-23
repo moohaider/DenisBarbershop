@@ -1,0 +1,11 @@
+# Sicherheits-Header für alle statisch ausgelieferten Seiten (Cloudflare Workers Static Assets).
+# Die CSP setzt SvelteKit selbst als <meta>-Tag mit Hashes für die Inline-Skripte.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()
+  X-Frame-Options: DENY
+
+/_app/immutable/*
+  Cache-Control: public, max-age=31536000, immutable

@@ -12,6 +12,14 @@ export const PREVIEW_LOGIN_PATH = '/vorschau';
 export const PREVIEW_LOGOUT_PATH = '/vorschau/abmelden';
 export const PREVIEW_COOKIE_MAX_AGE = 60 * 60 * 24 * 30;
 
+/**
+ * Weiterleitung als Antwort statt `redirect()` zu werfen: Im Vite-Dev-Server mit
+ * `cloudflare:workers` wird das geworfene Redirect sonst als Fehler 500 behandelt.
+ */
+export function seeOther(location: string): Response {
+	return new Response(null, { status: 303, headers: { location } });
+}
+
 /** Seiten, die auch ohne Zugang erreichbar sind (Impressum und Datenschutz sind Pflicht). */
 const PUBLIC_PATHS = new Set([
 	'/',

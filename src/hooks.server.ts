@@ -1,12 +1,12 @@
 import { env } from 'cloudflare:workers';
 import { building } from '$app/env';
-import { redirect } from '@sveltejs/kit';
 import type { Handle } from '@sveltejs/kit/hooks';
 import {
 	isPublicPath,
 	isSiteLocked,
 	isValidCookie,
-	PREVIEW_COOKIE
+	PREVIEW_COOKIE,
+	seeOther
 } from '#lib/server/preview-gate.ts';
 
 /**
@@ -34,7 +34,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	event.locals.previewAccess = access;
 
 	// Vorschau-Schutz (ADR-0011): ohne Zugang nur Platzhalter, Rechtliches und Login.
-	if (!access && !isPublicPath(event.url.pathname)) redirect(303, '/');
+	if (!access && !isPublicPath(event.url.pathname)) return seeOther('/');
 
 	const response = await resolve(event);
 	for (const [name, value] of Object.entries(SECURITY_HEADERS)) {

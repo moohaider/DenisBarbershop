@@ -34,7 +34,7 @@ Cloudflare Workers Builds, verbunden mit diesem Repo, deployt jeden Push auf `ma
 | Deploy command | `npx wrangler deploy` |
 | Root directory | `/`                   |
 
-Die Domain `denis-barbershop.de` wird im Cloudflare-Dashboard unter _Workers → denis-barbershop → Settings → Domains & Routes_ als Custom Domain hinzugefügt.
+Die Domain `denis-barbershop.de` wird im Cloudflare-Dashboard unter _Workers → denisbarbershop → Settings → Domains & Routes_ als Custom Domain hinzugefügt.
 
 ### Vorschau-Schutz bis zum Start
 

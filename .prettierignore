@@ -13,3 +13,7 @@ bun.lockb
 CLAUDE.md
 README.md
 worker-configuration.d.ts
+
+# Werkzeuge (Claude Code, Impeccable)
+/.claude/
+/.impeccable/

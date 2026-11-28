@@ -31,3 +31,9 @@ test-results
 
 # IDE
 .idea
+
+# Zeiterfassung (lokal, Export per /zeit)
+.claude/timelog/
+
+# Projektkontext-Archiv
+*.zip

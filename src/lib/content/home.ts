@@ -1,8 +1,8 @@
 /**
- * Alle Texte der Startseite (Quelle: docs/design/prototyp.html, freigegeben).
+ * Alle Texte der Startseite. Aufbau und Tonalität nach der Kundenvorlage „Kupfer & Tabak“.
  * Phase 0: Termine nur telefonisch, Online-Buchung wird angekündigt.
  */
-import { addressLine, business } from './business';
+import { business } from './business';
 
 export const seo = {
 	title: 'Denis Barbershop Hamburg-Barmbek | Barbier an der Dehnhaide',
@@ -10,84 +10,106 @@ export const seo = {
 };
 
 export const nav = [
-	{ id: 'leistungen', label: 'Preise' },
-	{ id: 'galerie', label: 'Galerie' },
-	{ id: 'bewertungen', label: 'Bewertungen' },
+	{ id: 'leistungen', label: 'Leistungen' },
+	{ id: 'termin', label: 'Termin buchen' },
+	{ id: 'lookbook', label: 'Lookbook' },
 	{ id: 'kontakt', label: 'Kontakt' }
 ];
 
+export const brand = { first: 'Denis’', second: 'Barbershop' };
+
+export const legal = { back: 'Zurück zur Startseite' };
+
+export const headerCta = 'Stuhl reservieren';
+
 export const hero = {
+	label: 'Barbershop in Hamburg-Barmbek',
 	titleStart: 'Frisch geschnitten.',
 	titleEmphasis: 'Ohne Warten.',
-	lead: 'Dein Barbershop an der Dehnhaide in Hamburg-Barmbek. Ruf an für deinen Termin oder komm einfach vorbei. Online buchen kannst du schon bald.',
+	lead: 'Präzise Schnitte, saubere Konturen und Bartpflege an der Dehnhaide. Denis führt den Laden selbst und nimmt sich für jeden Kunden Zeit.',
+	rows: {
+		barber: 'Barbier',
+		barberValue: 'Denis (Inhaber)',
+		status: 'Status',
+		prices: 'Preise',
+		pricesValue: 'Haarschnitt ab 14 €',
+		place: 'Ort'
+	},
 	primary: 'Termin vereinbaren',
-	secondary: 'Preise ansehen',
-	pillText: 'Online-Buchung startet bald',
-	pillAction: 'Jetzt telefonisch buchen',
-	facts: [
-		{ title: 'Haarschnitte ab 14 €', text: 'Bart ab 15 €' },
-		{ title: 'Mo–Sa, 9–20 Uhr', text: `${business.street}, ${business.city}` },
-		{ title: 'Bald online buchbar', text: 'bis dahin per Telefon' }
-	],
-	photo: { title: 'Hauptfoto', text: 'Denis bei der Arbeit oder der Laden von innen, Hochformat' }
-};
-
-export const howItWorks = {
-	eyebrow: 'Bald verfügbar',
-	title: 'Online buchen in drei Tipps',
-	steps: [
-		{
-			title: 'Leistung wählen',
-			text: 'Haarschnitt, Bart oder Kombi. Der Preis steht immer dabei.'
-		},
-		{ title: 'Zeit aussuchen', text: 'Du siehst sofort, was frei ist, und buchst ohne Konto.' },
-		{
-			title: 'Erinnerung bekommen',
-			text: 'Am Vortag melden wir uns per WhatsApp. Absagen geht mit einem Tipp.'
-		}
-	]
+	note: 'Online-Buchung startet bald. Bis dahin per Telefon:'
 };
 
 export const prices = {
-	eyebrow: 'Preisliste',
-	title: 'Leistungen und Preise',
-	sub: 'Alle Preise inklusive. Termine vereinbarst du aktuell telefonisch.',
-	all: 'Alle',
+	label: 'Salon-Menü',
+	title: 'Leistungsverzeichnis',
+	all: 'Alle Services',
 	filterLabel: 'Kategorie filtern',
-	action: 'Anfragen'
+	duration: 'Dauer: ca.',
+	action: 'Termin anfragen'
 };
 
-export const bookingModes = {
-	eyebrow: 'Bald verfügbar',
-	title: 'Mittwoch fest, sonst Warteliste',
+export const booking = {
+	label: 'Online-Reservierung',
+	title: 'Bald buchst du deinen Termin direkt bei Denis.',
+	sub: 'Da Denis den Laden selbst führt, wirst du immer vom Inhaber bedient. Bis die Online-Buchung startet, vereinbarst du deinen Termin telefonisch.',
+	steps: [
+		{
+			title: '1. Leistung',
+			text: 'Haarschnitt, Bart oder Kombi wählen. Der Preis steht immer dabei.'
+		},
+		{
+			title: '2. Datum & Uhrzeit',
+			text: 'Freie Zeiten sehen und ohne Konto buchen. Mittwochs feste Termine, sonst Warteliste.'
+		},
+		{
+			title: '3. Abschluss',
+			text: 'Bestätigung per E-Mail, am Vortag eine Erinnerung per WhatsApp.'
+		}
+	],
 	fixed: {
-		tag: 'Jeden Mittwoch',
-		title: 'Fester Termin',
-		text: 'Du wählst deine Uhrzeit und kommst ohne Wartezeit dran. Dein Platz ist reserviert.',
-		action: 'Termin anfragen'
+		title: 'Jeden Mittwoch: fester Termin',
+		text: 'Du wählst deine Uhrzeit und kommst ohne Wartezeit dran.'
 	},
 	waitlist: {
-		tag: 'Mo, Di, Do, Fr, Sa',
-		title: 'Digitale Warteliste',
-		text: 'Sag uns, wann es dir passt. Sobald ein Platz frei wird, bekommst du eine WhatsApp und bestätigst mit einem Tipp.',
-		action: 'Mehr erfahren'
-	}
+		title: 'Mo, Di, Do, Fr, Sa: Warteliste',
+		text: 'Sobald ein Platz frei wird, bekommst du eine WhatsApp und bestätigst mit einem Tipp.'
+	},
+	summaryLabel: 'Bis dahin',
+	summaryTitle: 'Termin per Telefon',
+	summaryText: 'Montag bis Samstag, 9 bis 20 Uhr. Oder komm einfach vorbei.',
+	action: 'Termin vereinbaren'
 };
 
-export const gallery = {
-	eyebrow: 'Galerie',
-	title: 'Frisch aus dem Stuhl',
-	sub: 'Aktuelle Schnitte und ein Blick in den Laden.',
-	/** Platzhalter, bis echte Fotos vorliegen (Pflicht vor dem Launch). */
-	photos: [
-		{ title: 'Foto 1', text: 'Fade, Hochformat', shape: 'tall' },
-		{ title: 'Foto 2', text: 'Bart und Konturen', shape: 'square' },
-		{ title: 'Foto 3', text: 'Vorher / Nachher', shape: 'square' },
-		{ title: 'Foto 4', text: 'Der Laden von innen, Querformat', shape: 'wide' },
-		{ title: 'Foto 5', text: 'Kinderhaarschnitt', shape: 'square' },
-		{ title: 'Foto 6', text: 'Werkzeug, Detail', shape: 'square' },
-		{ title: 'Foto 7', text: 'Denis im Porträt', shape: 'square' }
-	] as const
+export const lookbook = {
+	label: 'Lookbook',
+	title: 'Schnitte & Rasuren von Denis.',
+	looks: [
+		{
+			tag: 'Signatur',
+			title: 'Fade mit der Maschine',
+			text: 'Sauberer, tiefer Übergang. Kurz und pflegeleicht.',
+			photo: 'Foto: Fade von der Seite'
+		},
+		{
+			tag: 'Klassiker',
+			title: 'Waschen & Schneiden',
+			text: 'Zeitloser Schnitt mit Styling.',
+			photo: 'Foto: klassischer Schnitt'
+		},
+		{
+			tag: 'Bart',
+			title: 'Model-Rasur',
+			text: 'Bart in Form, mit exakten Linien an Wange und Hals.',
+			photo: 'Foto: Bart mit Konturen'
+		},
+		{
+			tag: 'Komplett',
+			title: 'Das volle Paket',
+			text: 'Haare, Bart und Gesicht in einem Termin.',
+			photo: 'Foto: Vorher und nachher'
+		}
+	],
+	action: 'Diesen Look anfragen'
 };
 
 export const social = {
@@ -112,22 +134,18 @@ export const social = {
 };
 
 export const reviews = {
-	eyebrow: 'Google-Bewertungen',
-	title: 'Das sagen unsere Kunden',
-	countLabel: 'Bewertungen auf Google',
+	label: 'Google-Bewertungen',
+	title: 'Das sagen Stammkunden.',
 	/** Platzhalter, bis die echten Bewertungen per Google Places API kommen (Phase 2). */
-	placeholders: [
-		'Hier erscheinen automatisch die neuesten Bewertungen von Google, mit Name, Sternen und Datum.',
-		'Die Bewertungen werden einmal am Tag aktualisiert.',
-		'Nur echte Bewertungen, direkt von Google.'
-	],
-	placeholderTitle: 'Platz für eine Google-Bewertung',
+	placeholders: ['Bewertung 1', 'Bewertung 2', 'Bewertung 3'],
+	placeholderText:
+		'Platz für eine echte Google-Bewertung mit Name, Sternen und Datum. Wird einmal am Tag aktualisiert.',
 	write: 'Bewertung schreiben',
 	all: 'Alle Bewertungen auf Google'
 };
 
 export const regulars = {
-	eyebrow: 'Für Stammkunden',
+	label: 'Für Stammkunden',
 	title: 'Du kennst uns schon? Bald buchst du online.',
 	benefits: [
 		'Kein Anruf und kein Warten im Laden mehr',
@@ -135,8 +153,8 @@ export const regulars = {
 		'Auf Wunsch erinnern wir dich, wenn es wieder Zeit für einen Schnitt ist',
 		'Absagen per WhatsApp, der Platz geht dann an die Warteliste'
 	],
-	action: 'Jetzt Termin vereinbaren',
-	hint: 'Tippe in der Vorschau auf einen der Buttons.',
+	action: 'Termin vereinbaren',
+	hint: 'So sieht die Erinnerung aus. Tippe auf einen der Buttons.',
 	preview: {
 		label: 'Vorschau der WhatsApp-Erinnerung',
 		account: 'Unternehmenskonto',
@@ -154,31 +172,21 @@ export const regulars = {
 };
 
 export const contact = {
-	eyebrow: 'Kontakt',
-	title: 'So findest du uns',
+	label: 'Salon & Zeiten',
+	title: 'Besuch Denis im Laden.',
 	statusFallback: 'Mo–Sa geöffnet',
 	address: 'Adresse',
 	route: 'Route in Google Maps',
-	hoursTitle: 'Öffnungszeiten',
-	hours: [
-		{ days: 'Mo–Sa', time: '09:00–20:00' },
-		{ days: 'So', time: 'geschlossen' }
-	],
 	phone: 'Telefon',
 	copy: 'Nummer kopieren',
 	copied: 'Kopiert',
-	social: 'Social Media',
-	mapPhoto: { title: 'Karte oder Außenfoto', text: 'Schaufenster an der Dehnhaide' }
-};
-
-export const finalCta = {
-	title: 'Dein Stuhl ist frei.',
-	text: 'Ruf uns an und sichere dir deinen Termin. Online buchen kannst du schon bald.',
-	action: 'Termin vereinbaren'
+	hoursTitle: 'Öffnungszeiten',
+	today: '(heute)',
+	closed: 'Geschlossen',
+	social: 'Social Media'
 };
 
 export const footer = {
-	line: `${business.name} · ${addressLine}`,
 	imprint: 'Impressum',
 	privacy: 'Datenschutz'
 };
@@ -195,10 +203,9 @@ export const callDialog = {
 	text: 'Bis dahin vereinbarst du deinen Termin einfach telefonisch oder kommst direkt vorbei.',
 	phone: 'Telefon',
 	hours: 'Öffnungszeiten',
-	hoursValue: 'Mo–Sa, 09:00–20:00 Uhr',
+	hoursValue: 'Montag bis Samstag, 9 bis 20 Uhr',
 	address: 'Adresse',
 	call: 'Jetzt anrufen'
 };
 
-export const headerCta = 'Termin';
 export const placeholderNote = 'Platzhalter';

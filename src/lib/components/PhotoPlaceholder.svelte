@@ -56,7 +56,7 @@
 	svg {
 		width: 28px;
 		height: 28px;
-		stroke: var(--accent);
+		stroke: var(--color-gold-deep);
 		fill: none;
 		stroke-width: 1.6;
 	}

@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DENIS’ BARBERSHOP — Kupfer &amp; Tabak Edition</title>
+
+  <!-- Google Fonts: Bodoni Moda (Display) & DM Sans (Body) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,600;0,6..96,700;1,6..96,600&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <style>
+    .font-kupfer-display { font-family: 'Bodoni Moda', Georgia, serif; }
+    .font-kupfer-sans { font-family: 'DM Sans', sans-serif; }
+
+    ::-webkit-scrollbar { width: 7px; height: 7px; }
+    ::-webkit-scrollbar-track { background: #241914; }
+    ::-webkit-scrollbar-thumb { background: #C86D3B; border-radius: 9999px; }
+  </style>
+</head>
+<body class="bg-[#F4EDE2] text-[#241914] font-kupfer-sans antialiased selection:bg-[#C86D3B] selection:text-white">
+
+  <!-- ===================================================================== -->
+  <!-- HAUPT-CONTAINER FÜR DESIGN 05: KUPFER & TABAK                         -->
+  <!-- ===================================================================== -->
+  <div id="app-root" class="min-h-screen"></div>
+
+  <!-- ===================================================================== -->
+  <!-- MODALS (TERMINBUCHUNG, LOOKBOOK-LIGHTBOX, RECHTLICHES, TOAST)          -->
+  <!-- ===================================================================== -->
+
+  <!-- 1. Online-Terminbuchungs-Modal -->
+  <div id="booking-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div id="booking-modal-card" class="relative w-full max-w-4xl max-h-[92vh] overflow-y-auto bg-[#F4EDE2] text-[#241914] rounded-2xl shadow-2xl border border-[#C86D3B]/40">
+      <!-- Per JS befüllt -->
+    </div>
+  </div>
+
+  <!-- 2. Lookbook / Stil-Vorschau Modal -->
+  <div id="lightbox-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div id="lightbox-modal-card" class="relative w-full max-w-lg bg-[#FBF8F3] text-[#241914] rounded-2xl p-6 sm:p-8 shadow-2xl border border-[#C86D3B]/40">
+      <!-- Per JS befüllt -->
+    </div>
+  </div>
+
+  <!-- 3. Rechtliches (Impressum & Datenschutz) Modal -->
+  <div id="legal-modal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm" role="dialog" aria-modal="true">
+    <div class="relative w-full max-w-2xl max-h-[85vh] overflow-y-auto bg-[#FBF8F3] text-[#241914] rounded-2xl p-6 sm:p-8 shadow-2xl border border-[#C86D3B]/35">
+      <div class="flex items-center justify-between pb-4 border-b border-[#C86D3B]/25">
+        <h3 id="legal-modal-title" class="font-kupfer-display text-2xl font-bold">Impressum</h3>
+        <button type="button" onclick="closeLegalModal()" class="w-8 h-8 rounded-lg bg-[#E9DFD0] hover:bg-[#DFD2BF] flex items-center justify-center font-bold">✕</button>
+      </div>
+      <div id="legal-modal-body" class="pt-5 space-y-4 text-sm text-[#5E4D44] leading-relaxed"></div>
+    </div>
+  </div>
+
+  <!-- 4. Dezente Status-Benachrichtigung -->
+  <div id="toast-box" class="fixed bottom-5 right-5 z-50 hidden items-center gap-2.5 px-4 py-3 rounded-xl bg-[#241914] text-[#F4EDE2] text-xs sm:text-sm font-semibold shadow-2xl border border-[#C86D3B]">
+    <span class="w-2 h-2 rounded-full bg-[#D9A441]"></span>
+    <span id="toast-msg">Aktualisiert</span>
+  </div>
+
+  <!-- ===================================================================== -->
+  <!-- JAVASCRIPT: KONFIGURATION & INTERAKTIVE BUCHUNGSLOGIK                 -->
+  <!-- ===================================================================== -->
+  <script>
+    /**
+     * 1. ZENTRALE SALON-KONFIGURATION
+     */
+    const SALON_CONFIG = {
+      brandName: 'DENIS’ BARBERSHOP',
+      ownerLabel: 'Persönlich bei Denis (Inhaber)',
+      ratingLabel: '4,9 ★ (180+ Bewertungen)',
+      address: 'Musterstraße 12, 20095 Hamburg',
+      phone: '040 / 123 456 78',
+      phoneHref: 'tel:+494012345678',
+      email: 'termin@denis-barbershop.de',
+      legal: {
+        providerLine: 'Denis’ Barbershop · Inhaber: Denis',
+        chamberLine: 'Handwerkskammer Hamburg'
+      }
+    };
+
+    const SERVICES = [
+      { id: 'cut', cat: 'hair', name: 'Klassischer Haarschnitt', duration: 40, price: 34, popular: true, desc: 'Typgerechte Beratung, präziser Scheren- & Maschinenschnitt, Waschen und Styling.' },
+      { id: 'fade', cat: 'hair', name: 'Skin Fade & Konturen', duration: 45, price: 38, popular: true, desc: 'Nahtloser Übergang auf 0 mm, exakte Nacken- und Schläfenkontur mit dem Rasiermesser.' },
+      { id: 'beard', cat: 'beard', name: 'Bartpflege & Hot-Towel-Kontur', duration: 30, price: 24, popular: false, desc: 'Formgebung mit Schere & Trimmer, heiße Kompresse, Nassrasur der Konturen und Bartöl.' },
+      { id: 'shave', cat: 'beard', name: 'Traditionelle Nassrasur', duration: 35, price: 29, popular: false, desc: 'Mehrstufiges Hot-Towel-Ritual, reichhaltiger Rasierschaum und beruhigender Aftershave-Balsam.' },
+      { id: 'combo', cat: 'package', name: 'Denis’ Meister-Kombi (Haar & Bart)', duration: 65, price: 54, popular: true, desc: 'Kompletter Haarschnitt inkl. Waschen sowie ausführliche Bartpflege mit heißem Tuch.' },
+      { id: 'royal', cat: 'package', name: 'Royal Grooming Paket', duration: 85, price: 69, popular: false, desc: 'Haarschnitt, Nassrasur oder Vollbart-Ritual, Gesichtspflege und Espresso im Salon.' }
+    ];
+
+    const LOOKS = [
+      { id: 'l1', tag: 'Signatur', title: 'Textured Crop & Low Fade', desc: 'Sauberer, tiefer Übergang kombiniert mit natürlicher Struktur am Oberkopf.', serviceId: 'fade' },
+      { id: 'l2', tag: 'Klassiker', title: 'Scherenschnitt & Seitenscheitel', desc: 'Zeitloser Herren-Look mit weichen Konturen und klassischem Finish.', serviceId: 'cut' },
+      { id: 'l3', tag: 'Bartkunst', title: 'Full Beard & Razor Line-Up', desc: 'Präzise Wangen- und Halslinie mit heißer Kompresse und Pflegeöl.', serviceId: 'beard' },
+      { id: 'l4', tag: 'Komplett', title: 'Executive Hair & Beard', desc: 'Abgestimmtes Gesamtbild aus Meister-Haarschnitt und Bart-Sculpting.', serviceId: 'combo' }
+    ];
+
+    const REVIEWS = [
+      { author: 'Lukas M.', service: 'Meister-Kombi', text: 'Endlich ein Barbershop, bei dem man nicht im Akkord durchgeschleust wird. Denis nimmt sich Zeit und schneidet extrem präzise.' },
+      { author: 'Markus K.', service: 'Skin Fade', text: 'Bester Übergang in der Stadt. Angenehme Atmosphäre, pünktlich auf die Minute und immer direkt beim Inhaber.' },
+      { author: 'Jonas R.', service: 'Bartpflege & Rasur', text: 'Das Hot-Towel-Ritual ist pure Entspannung. Man merkt sofort die Erfahrung und Ruhe bei jedem Handgriff.' }
+    ];
+
+    const HOURS = [
+      { day: 1, label: 'Montag', time: 'Geschlossen', open: null, close: null },
+      { day: 2, label: 'Dienstag', time: '09:30 – 19:00', open: 9.5, close: 19 },
+      { day: 3, label: 'Mittwoch', time: '09:30 – 19:00', open: 9.5, close: 19 },
+      { day: 4, label: 'Donnerstag', time: '10:00 – 20:00', open: 10, close: 20 },
+      { day: 5, label: 'Freitag', time: '09:30 – 19:30', open: 9.5, close: 19.5 },
+      { day: 6, label: 'Samstag', time: '09:00 – 16:00', open: 9, close: 16 },
+      { day: 0, label: 'Sonntag', time: 'Geschlossen', open: null, close: null }
+    ];
+
+    /**
+     * 2. ANWENDUNGSZUSTAND & KALENDER-LOGIK
+     */
+    const state = {
+      serviceCategory: 'all',
+      selectedServices: ['combo'],
+      bookingStep: 1,
+      selectedDayOffset: 0,
+      selectedTime: '11:00',
+      customerName: '',
+      customerPhone: '',
+      customerNotes: '',
+      confirmedBooking: null
+    };
+
+    let calendarDays = [];
+
+    function generateCalendarDays() {
+      const days = [];
+      const dayNames = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+      const monthNames = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
+      const base = new Date();
+
+      for (let i = 0; i < 10; i++) {
+        const d = new Date(base);
+        d.setDate(base.getDate() + i);
+        const dow = d.getDay();
+        if (dow === 0 || dow === 1) continue;
+
+        const isoDate = d.toISOString().split('T')[0];
+        const slots = dow === 6
+          ? ['09:30', '10:30', '11:30', '13:00', '14:15']
+          : ['10:00', '11:00', '12:30', '14:30', '16:00', '17:30'];
+
+        days.push({
+          dayLabel: i === 0 ? 'Heute' : dayNames[dow],
+          dateLabel: `${d.getDate()}. ${monthNames[d.getMonth()]}`,
+          fullDate: `${dayNames[dow]}, ${d.getDate()}. ${monthNames[d.getMonth()]} ${d.getFullYear()}`,
+          isoDate,
+          slots
+        });
+        if (days.length >= 6) break;
+      }
+      calendarDays = days;
+      if (calendarDays[0]) state.selectedTime = calendarDays[0].slots[0];
+    }
+
+    function getLiveStatus() {
+      const now = new Date();
+      const dow = now.getDay();
+      const hour = now.getHours() + now.getMinutes() / 60;
+      const entry = HOURS.find(h => h.day === dow);
+      if (entry && entry.open !== null && hour >= entry.open && hour < entry.close) {
+        return { isOpen: true, text: `Geöffnet · Heute bis ${entry.time.split('–')[1].trim()} Uhr` };
+      }
+      return { isOpen: false, text: 'Online-Buchung 24/7 verfügbar · Di–Sa geöffnet' };
+    }
+
+    function getSelectionTotals() {
+      const items = SERVICES.filter(s => state.selectedServices.includes(s.id));
+      const totalDuration = items.reduce((acc, s) => acc + s.duration, 0);
+      const totalPrice = items.reduce((acc, s) => acc + s.price, 0);
+      return { items, totalDuration, totalPrice };
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById('toast-box');
+      const label = document.getElementById('toast-msg');
+      if (!box || !label) return;
+      label.textContent = msg;
+      box.classList.remove('hidden');
+      box.classList.add('flex');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        box.classList.add('hidden');
+        box.classList.remove('flex');
+      }, 3200);
+    }
+
+    /**
+     * 3. UI-KOMPONENTEN (LEISTUNGEN, BUCHUNGS-WIZARD, HAUPTSEITE)
+     */
+    function renderServiceCardsHTML() {
+      const filtered = state.serviceCategory === 'all'
+        ? SERVICES
+        : SERVICES.filter(s => s.cat === state.serviceCategory);
+
+      return filtered.map(srv => {
+        const selected = state.selectedServices.includes(srv.id);
+        return `
+          <div class="bg-[#FBF8F3] border border-[#C86D3B]/30 rounded-2xl p-5 sm:p-6 flex flex-col justify-between gap-4 transition hover:border-[#C86D3B]/70">
+            <div>
+              <div class="flex items-start justify-between gap-3">
+                <h3 class="font-kupfer-display text-lg sm:text-xl font-bold leading-snug">${srv.name}</h3>
+                <span class="font-kupfer-display text-xl font-bold text-[#C86D3B] shrink-0">${srv.price} €</span>
+              </div>
+              <div class="flex items-center gap-2 mt-1.5 text-xs text-[#5E4D44]">
+                <span>Dauer: ca. ${srv.duration} Min.</span>
+                ${srv.popular ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-[#C86D3B] text-white">Beliebt</span>` : ''}
+              </div>
+              <p class="text-xs sm:text-sm text-[#5E4D44] mt-3 leading-relaxed">${srv.desc}</p>
+            </div>
+            <div class="pt-3 border-t border-[#241914]/10 flex items-center justify-between gap-2">
+              <button
+                type="button"
+                onclick="toggleService('${srv.id}')"
+                class="px-3.5 py-2 text-xs rounded-xl transition ${
+                  selected
+                    ? 'bg-[#C86D3B] text-white font-bold'
+                    : 'bg-[#E9DFD0] text-[#241914] hover:bg-[#DFD2BF] font-semibold'
+                }"
+              >
+                ${selected ? '✓ Ausgewählt' : '+ Hinzufügen'}
+              </button>
+              <button type="button" onclick="bookSingleService('${srv.id}')" class="text-xs font-bold text-[#C86D3B] hover:underline">
+                Direkt buchen →
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderBookingWidgetHTML() {
+      const { items, totalDuration, totalPrice } = getSelectionTotals();
+      const activeDay = calendarDays[state.selectedDayOffset] || calendarDays[0];
+
+      if (state.confirmedBooking) {
+        const b = state.confirmedBooking;
+        return `
+          <div class="bg-[#FBF8F3] border border-[#C86D3B]/35 rounded-2xl p-6 sm:p-10 text-center space-y-5">
+            <span class="inline-block px-4 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider bg-[#C86D3B] text-white">
+              Reservierung bestätigt · Code ${b.code}
+            </span>
+            <h3 class="font-kupfer-display text-2xl sm:text-3xl font-bold">
+              Vielen Dank, ${b.customerName}! Dein Stuhl bei Denis ist reserviert.
+            </h3>
+            <div class="max-w-md mx-auto p-4 rounded-2xl border border-[#241914]/15 bg-[#F4EDE2]/60 text-left text-xs sm:text-sm space-y-1.5">
+              <p><strong>Barbier:</strong> ${SALON_CONFIG.ownerLabel}</p>
+              <p><strong>Termin:</strong> ${b.fullDate} um ${b.time} Uhr</p>
+              <p><strong>Leistung:</strong> ${b.summary} (${b.duration} Min.)</p>
+              <p><strong>Gesamtbetrag im Salon:</strong> ${b.price} €</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-3 pt-2">
+              <button type="button" onclick="downloadICS()" class="px-6 py-3 text-xs sm:text-sm bg-[#241914] text-[#F4EDE2] hover:bg-[#382720] font-bold rounded-xl transition">
+                Kalender-Eintrag (.ics) speichern
+              </button>
+              <button type="button" onclick="resetBooking()" class="px-6 py-3 text-xs sm:text-sm bg-[#E9DFD0] text-[#241914] hover:bg-[#DFD2BF] font-semibold rounded-xl transition">
+                Weiteren Termin planen
+              </button>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="bg-[#FBF8F3] border border-[#C86D3B]/35 rounded-2xl p-5 sm:p-8 space-y-6">
+          <!-- 3-Schritte-Navigation -->
+          <div class="grid grid-cols-3 gap-2 sm:gap-3">
+            ${[
+              { step: 1, title: '1. Leistung' },
+              { step: 2, title: '2. Datum & Uhrzeit' },
+              { step: 3, title: '3. Abschluss' }
+            ].map(s => `
+              <button
+                type="button"
+                onclick="setBookingStep(${s.step})"
+                class="py-2.5 px-3 text-xs sm:text-sm text-center rounded-xl transition ${
+                  state.bookingStep === s.step
+                    ? 'bg-[#C86D3B] text-white font-bold'
+                    : 'bg-[#E9DFD0] text-[#241914] hover:bg-[#DFD2BF] font-semibold'
+                }"
+              >
+                ${s.title}
+              </button>
+            `).join('')}
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            <!-- Linker Konfigurationsbereich -->
+            <div class="lg:col-span-8 space-y-4">
+              ${state.bookingStep === 1 ? `
+                <p class="text-xs font-bold uppercase tracking-wider text-[#5E4D44]">Gewünschte Behandlungen wählen:</p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  ${SERVICES.map(srv => {
+                    const checked = state.selectedServices.includes(srv.id);
+                    return `
+                      <button
+                        type="button"
+                        onclick="toggleService('${srv.id}')"
+                        class="p-4 text-left border rounded-2xl transition ${
+                          checked
+                            ? 'border-[#C86D3B] bg-[#C86D3B]/10'
+                            : 'border-[#241914]/15 hover:border-[#C86D3B]/50'
+                        }"
+                      >
+                        <div class="flex items-center justify-between font-bold text-sm">
+                          <span>${checked ? '✓ ' : ''}${srv.name}</span>
+                          <span class="text-[#C86D3B]">${srv.price} €</span>
+                        </div>
+                        <p class="text-xs text-[#5E4D44] mt-1">${srv.duration} Min. · ${SALON_CONFIG.ownerLabel}</p>
+                      </button>
+                    `;
+                  }).join('')}
+                </div>
+                <div class="pt-2">
+                  <button type="button" onclick="setBookingStep(2)" class="px-6 py-3 text-xs sm:text-sm bg-[#241914] text-[#F4EDE2] hover:bg-[#382720] font-bold rounded-xl transition">
+                    Weiter zur Terminauswahl →
+                  </button>
+                </div>
+              ` : ''}
+
+              ${state.bookingStep === 2 ? `
+                <p class="text-xs font-bold uppercase tracking-wider text-[#5E4D44]">Tag wählen:</p>
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  ${calendarDays.map((d, idx) => `
+                    <button
+                      type="button"
+                      onclick="selectDay(${idx})"
+                      class="p-2.5 text-center text-xs rounded-xl transition ${
+                        state.selectedDayOffset === idx
+                          ? 'bg-[#C86D3B] text-white font-bold'
+                          : 'bg-[#E9DFD0] text-[#241914] hover:bg-[#DFD2BF] font-semibold'
+                      }"
+                    >
+                      <span class="block font-bold">${d.dayLabel}</span>
+                      <span class="block opacity-80 mt-0.5">${d.dateLabel}</span>
+                    </button>
+                  `).join('')}
+                </div>
+
+                <p class="text-xs font-bold uppercase tracking-wider text-[#5E4D44] pt-2">Freie Uhrzeiten bei Denis:</p>
+                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2">
+                  ${(activeDay?.slots || []).map(slot => `
+                    <button
+                      type="button"
+                      onclick="selectTime('${slot}')"
+                      class="py-2.5 px-3 text-xs font-bold rounded-xl transition ${
+                        state.selectedTime === slot
+                          ? 'bg-[#C86D3B] text-white'
+                          : 'bg-[#E9DFD0] text-[#241914] hover:bg-[#DFD2BF]'
+                      }"
+                    >
+                      ${slot} Uhr
+                    </button>
+                  `).join('')}
+                </div>
+
+                <div class="flex flex-wrap gap-3 pt-3">
+                  <button type="button" onclick="setBookingStep(1)" class="px-5 py-3 text-xs bg-[#E9DFD0] text-[#241914] hover:bg-[#DFD2BF] font-semibold rounded-xl">← Zurück</button>
+                  <button type="button" onclick="setBookingStep(3)" class="px-6 py-3 text-xs sm:text-sm bg-[#241914] text-[#F4EDE2] hover:bg-[#382720] font-bold rounded-xl">Weiter zu deinen Daten →</button>
+                </div>
+              ` : ''}
+
+              ${state.bookingStep === 3 ? `
+                <form onsubmit="confirmBooking(event)" class="space-y-4">
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label class="block text-xs font-bold mb-1">Dein Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value="${state.customerName}"
+                        oninput="state.customerName = this.value"
+                        placeholder="Max Mustermann"
+                        class="w-full px-3.5 py-2.5 text-sm bg-white border border-[#241914]/25 rounded-2xl focus:outline-none focus:border-[#C86D3B]"
+                      />
+                    </div>
+                    <div>
+                      <label class="block text-xs font-bold mb-1">Telefonnummer für Rückfragen *</label>
+                      <input
+                        type="tel"
+                        required
+                        value="${state.customerPhone}"
+                        oninput="state.customerPhone = this.value"
+                        placeholder="0170 1234567"
+                        class="w-full px-3.5 py-2.5 text-sm bg-white border border-[#241914]/25 rounded-2xl focus:outline-none focus:border-[#C86D3B]"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label class="block text-xs font-bold mb-1">Wunsch / Notiz an Denis (optional)</label>
+                    <input
+                      type="text"
+                      value="${state.customerNotes}"
+                      oninput="state.customerNotes = this.value"
+                      placeholder="z. B. Übergang etwas höher ansetzen"
+                      class="w-full px-3.5 py-2.5 text-sm bg-white border border-[#241914]/25 rounded-2xl focus:outline-none focus:border-[#C86D3B]"
+                    />
+                  </div>
+                  <div class="flex flex-wrap gap-3 pt-2">
+                    <button type="button" onclick="setBookingStep(2)" class="px-5 py-3 text-xs bg-[#E9DFD0] text-[#241914] hover:bg-[#DFD2BF] font-semibold rounded-xl">← Zurück</button>
+                    <button type="submit" class="px-7 py-3 text-xs sm:text-sm bg-[#C86D3B] text-white hover:bg-[#B25C2E] font-bold rounded-xl transition">Termin verbindlich reservieren ✓</button>
+                  </div>
+                </form>
+              ` : ''}
+            </div>
+
+            <!-- Rechte Zusammenfassung -->
+            <div class="lg:col-span-4 p-5 border border-[#C86D3B]/35 bg-[#F4EDE2]/60 rounded-2xl space-y-3">
+              <p class="text-xs font-bold uppercase tracking-wider text-[#C86D3B]">Deine Übersicht</p>
+              <p class="text-xs font-semibold">${SALON_CONFIG.ownerLabel}</p>
+              <div class="text-xs space-y-1 border-t border-b border-[#241914]/15 py-3">
+                ${items.length > 0
+                  ? items.map(i => `<div class="flex justify-between"><span>${i.name}</span><span class="font-bold">${i.price} €</span></div>`).join('')
+                  : `<p class="text-[#5E4D44]">Noch keine Leistung ausgewählt</p>`
+                }
+              </div>
+              <div class="text-xs space-y-1">
+                <div class="flex justify-between"><span class="text-[#5E4D44]">Termin:</span><span class="font-bold">${activeDay?.dateLabel || ''} · ${state.selectedTime}</span></div>
+                <div class="flex justify-between"><span class="text-[#5E4D44]">Dauer:</span><span class="font-bold">ca. ${totalDuration} Min.</span></div>
+                <div class="flex justify-between text-sm pt-2 border-t border-[#241914]/15"><span class="font-bold">Gesamt:</span><span class="font-bold text-[#C86D3B]">${totalPrice} €</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderApp() {
+      const status = getLiveStatus();
+      const todayDow = new Date().getDay();
+      const root = document.getElementById('app-root');
+
+      const filterTabsHTML = [
+        { id: 'all', label: 'Alle Services' },
+        { id: 'hair', label: 'Haarschnitt' },
+        { id: 'beard', label: 'Bart & Rasur' },
+        { id: 'package', label: 'Komplettpakete' }
+      ].map(tab => `
+        <button
+          type="button"
+          onclick="setServiceFilter('${tab.id}')"
+          class="px-4 py-2 text-xs rounded-xl transition ${
+            state.serviceCategory === tab.id
+              ? 'bg-[#C86D3B] text-white font-bold'
+              : 'bg-[#E9DFD0] text-[#241914] hover:bg-[#DFD2BF] font-semibold'
+          }"
+        >
+          ${tab.label}
+        </button>
+      `).join('');
+
+      root.innerHTML = `
+        <!-- STICKY HEADER -->
+        <header class="sticky top-0 z-30 bg-[#F4EDE2]/95 backdrop-blur border-b border-[#C86D3B]/30">
+          <div class="max-w-7xl mx-auto px-4 sm:px-8 h-20 flex items-center justify-between">
+            <a href="#" class="font-kupfer-display text-2xl sm:text-3xl font-bold">
+              DENIS’ <span class="italic text-[#C86D3B]">Barbershop</span>
+            </a>
+            <nav class="hidden lg:flex items-center gap-7 text-xs font-bold uppercase tracking-wider text-[#5E4D44]">
+              <a href="#leistungen" class="hover:text-[#C86D3B] transition">Leistungen</a>
+              <a href="#termin" class="hover:text-[#C86D3B] transition">Termin buchen</a>
+              <a href="#lookbook" class="hover:text-[#C86D3B] transition">Lookbook</a>
+              <a href="#kontakt" class="hover:text-[#C86D3B] transition">Kontakt</a>
+            </nav>
+            <div class="flex items-center gap-4">
+              <span class="hidden md:inline text-xs font-semibold text-[#5E4D44]">${status.text}</span>
+              <button type="button" onclick="openBookingModal()" class="px-5 py-2.5 text-xs sm:text-sm bg-[#241914] text-[#F4EDE2] hover:bg-[#382720] font-bold rounded-xl transition">
+                Stuhl reservieren
+              </button>
+            </div>
+          </div>
+        </header>
+
+        <!-- ZWEISPALTIGES MAGAZIN-LAYOUT: FIXIERTE UMBRA-SÄULE LINKS + LEISTUNGEN RECHTS -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-8 py-10 sm:py-14 grid grid-cols-1 lg:grid-cols-12 gap-10">
+          <!-- Linke dunkle Manufaktur-Säule -->
+          <div class="lg:col-span-5">
+            <div class="bg-[#241914] text-[#F4EDE2] p-8 sm:p-10 rounded-2xl border border-[#C86D3B]/45 shadow-xl lg:sticky lg:top-28 space-y-6">
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-bold uppercase tracking-[0.25em] text-[#D9A441]">Kupfer &amp; Tabak Edition</span>
+                <span class="w-2.5 h-2.5 rounded-full ${status.isOpen ? 'bg-emerald-400' : 'bg-[#D9A441]'}"></span>
+              </div>
+              <h1 class="font-kupfer-display text-4xl sm:text-5xl font-bold leading-[1.1]">
+                Echtes Handwerk hat keine Eile.
+              </h1>
+              <p class="text-sm text-[#F4EDE2]/80 leading-relaxed">
+                Warme Ledertöne, frisch gebrühter Espresso und präzise Klingenführung. In Denis’ Barbershop nimmt sich der Inhaber persönlich Zeit für Schnitt, Kontur und Pflege.
+              </p>
+              <div class="pt-3 space-y-3 border-t border-[#F4EDE2]/15 text-xs">
+                <div class="flex justify-between"><span class="opacity-70">Barbier:</span><span class="font-bold text-[#D9A441]">Denis (Inhaber)</span></div>
+                <div class="flex justify-between"><span class="opacity-70">Status:</span><span class="font-bold">${status.text}</span></div>
+                <div class="flex justify-between"><span class="opacity-70">Bewertung:</span><span class="font-bold text-[#D9A441]">${SALON_CONFIG.ratingLabel}</span></div>
+                <div class="flex justify-between gap-4"><span class="opacity-70">Ort:</span><span class="font-bold text-right">${SALON_CONFIG.address}</span></div>
+              </div>
+              <button type="button" onclick="openBookingModal()" class="w-full py-4 bg-[#C86D3B] text-white hover:bg-[#B25C2E] font-bold rounded-xl text-sm transition">
+                Jetzt Termin bei Denis wählen
+              </button>
+            </div>
+          </div>
+
+          <!-- Rechte Leinen-Spalte mit Leistungsverzeichnis -->
+          <div id="leistungen" class="lg:col-span-7 space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#C86D3B]">Salon-Menü</p>
+                <h2 class="font-kupfer-display text-3xl font-bold mt-1">Leistungsverzeichnis</h2>
+              </div>
+              <div class="flex flex-wrap gap-1.5">${filterTabsHTML}</div>
+            </div>
+            <div class="space-y-4">${renderServiceCardsHTML()}</div>
+          </div>
+        </section>
+
+        <!-- EINGEBETTETER 3-SCHRITTE-TERMINPLANER -->
+        <section id="termin" class="py-14 sm:py-20 px-4 sm:px-8 max-w-6xl mx-auto">
+          <div class="mb-8 max-w-2xl">
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#C86D3B]">Online-Reservierung</p>
+            <h2 class="font-kupfer-display text-3xl sm:text-4xl font-bold mt-2">
+              Deinen Termin direkt bei Denis buchen.
+            </h2>
+            <p class="text-sm text-[#5E4D44] mt-2">
+              Da Denis den Salon persönlich führt, wirst du garantiert vom Inhaber selbst bedient – ohne Wartezeit.
+            </p>
+          </div>
+          ${renderBookingWidgetHTML()}
+        </section>
+
+        <!-- LOOKBOOK / STIL-GALERIE -->
+        <section id="lookbook" class="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto">
+          <div class="mb-10">
+            <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#C86D3B]">Lookbook</p>
+            <h2 class="font-kupfer-display text-3xl sm:text-4xl font-bold mt-2">
+              Signatur-Schnitte &amp; Rasuren.
+            </h2>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+            ${LOOKS.map((look, idx) => `
+              <button
+                type="button"
+                onclick="openLightbox('${look.id}')"
+                class="bg-[#FBF8F3] border border-[#C86D3B]/30 rounded-2xl p-6 text-left flex flex-col justify-between min-h-[230px] group transition-all hover:-translate-y-1 hover:border-[#C86D3B]"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider bg-[#C86D3B] text-white rounded-lg">${look.tag}</span>
+                  <span class="font-kupfer-display text-2xl font-bold text-[#241914]/25">0${idx + 1}</span>
+                </div>
+                <div class="pt-8">
+                  <h3 class="font-kupfer-display text-xl font-bold group-hover:underline">${look.title}</h3>
+                  <p class="text-xs text-[#5E4D44] mt-2 leading-relaxed">${look.desc}</p>
+                  <p class="text-xs font-bold text-[#C86D3B] mt-4">Look ansehen &amp; buchen →</p>
+                </div>
+              </button>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- KUNDENSTIMMEN + STANDORT & ÖFFNUNGSZEITEN -->
+        <section id="kontakt" class="py-14 sm:py-20 px-4 sm:px-8 max-w-7xl mx-auto">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <div class="lg:col-span-7 space-y-5">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#C86D3B]">${SALON_CONFIG.ratingLabel}</p>
+                <h2 class="font-kupfer-display text-3xl font-bold mt-2">Das sagen Stammkunden.</h2>
+              </div>
+              <div class="space-y-4">
+                ${REVIEWS.map(r => `
+                  <div class="bg-[#FBF8F3] border border-[#C86D3B]/30 rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-2">
+                      <span class="font-bold text-sm">${r.author}</span>
+                      <span class="text-xs text-[#C86D3B] font-bold">★★★★★ · ${r.service}</span>
+                    </div>
+                    <p class="text-xs sm:text-sm text-[#5E4D44] leading-relaxed">„${r.text}“</p>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <div class="lg:col-span-5 space-y-5">
+              <div>
+                <p class="text-xs font-bold uppercase tracking-[0.2em] text-[#C86D3B]">Salon &amp; Zeiten</p>
+                <h2 class="font-kupfer-display text-3xl font-bold mt-2">Besuche Denis im Salon.</h2>
+              </div>
+
+              <div class="bg-[#FBF8F3] border border-[#C86D3B]/30 rounded-2xl p-6 space-y-4">
+                <div>
+                  <p class="text-xs font-bold uppercase text-[#5E4D44]">Adresse</p>
+                  <p class="text-sm font-bold mt-0.5">${SALON_CONFIG.address}</p>
+                </div>
+                <div>
+                  <p class="text-xs font-bold uppercase text-[#5E4D44]">Telefon</p>
+                  <a href="${SALON_CONFIG.phoneHref}" class="text-sm font-bold text-[#C86D3B] mt-0.5 inline-block">${SALON_CONFIG.phone}</a>
+                </div>
+                <div class="pt-3 border-t border-[#241914]/15">
+                  <p class="text-xs font-bold uppercase text-[#5E4D44] mb-2">Öffnungszeiten</p>
+                  <ul class="space-y-1.5 text-xs sm:text-sm">
+                    ${HOURS.map(h => `
+                      <li class="flex justify-between ${h.day === todayDow ? 'font-bold text-[#C86D3B]' : ''}">
+                        <span>${h.label} ${h.day === todayDow ? '(Heute)' : ''}</span>
+                        <span>${h.time}</span>
+                      </li>
+                    `).join('')}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="border-t border-[#C86D3B]/30 bg-[#241914] text-[#F4EDE2] py-10 px-4 sm:px-8">
+          <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+            <div>
+              <span class="font-kupfer-display text-lg font-bold text-[#D9A441]">${SALON_CONFIG.brandName}</span>
+              <span class="text-[#F4EDE2]/70 ml-2">© 2026 · ${SALON_CONFIG.address}</span>
+            </div>
+            <div class="flex items-center gap-5 font-semibold">
+              <button type="button" onclick="openLegalModal('impressum')" class="underline underline-offset-4 hover:text-[#D9A441]">Impressum</button>
+              <button type="button" onclick="openLegalModal('datenschutz')" class="underline underline-offset-4 hover:text-[#D9A441]">Datenschutz</button>
+            </div>
+          </div>
+        </footer>
+      `;
+    }
+
+    /**
+     * 4. INTERAKTIONS-HANDLER
+     */
+    function setServiceFilter(cat) {
+      state.serviceCategory = cat;
+      renderApp();
+    }
+
+    function toggleService(serviceId) {
+      const idx = state.selectedServices.indexOf(serviceId);
+      if (idx > -1) {
+        state.selectedServices.splice(idx, 1);
+      } else {
+        state.selectedServices.push(serviceId);
+      }
+      renderApp();
+      refreshBookingModalIfOpen();
+    }
+
+    function bookSingleService(serviceId) {
+      state.selectedServices = [serviceId];
+      state.bookingStep = 2;
+      state.confirmedBooking = null;
+      renderApp();
+      openBookingModal();
+    }
+
+    function setBookingStep(step) {
+      if (step > 1 && state.selectedServices.length === 0) {
+        showToast('Bitte wähle zuerst mindestens eine Leistung aus.');
+        return;
+      }
+      state.bookingStep = step;
+      renderApp();
+      refreshBookingModalIfOpen();
+    }
+
+    function selectDay(offset) {
+      state.selectedDayOffset = offset;
+      const d = calendarDays[offset];
+      if (d && d.slots.length > 0) state.selectedTime = d.slots[0];
+      renderApp();
+      refreshBookingModalIfOpen();
+    }
+
+    function selectTime(timeStr) {
+      state.selectedTime = timeStr;
+      renderApp();
+      refreshBookingModalIfOpen();
+    }
+
+    function confirmBooking(e) {
+      e.preventDefault();
+      const { items, totalDuration, totalPrice } = getSelectionTotals();
+      const d = calendarDays[state.selectedDayOffset] || calendarDays[0];
+      const code = 'DB-' + Math.floor(1000 + Math.random() * 9000);
+
+      state.confirmedBooking = {
+        code,
+        customerName: state.customerName.trim() || 'Gast',
+        fullDate: d.fullDate,
+        isoDate: d.isoDate,
+        time: state.selectedTime,
+        summary: items.map(i => i.name).join(', '),
+        duration: totalDuration,
+        price: totalPrice
+      };
+
+      renderApp();
+      refreshBookingModalIfOpen();
+      showToast(`Termin (${code}) bei Denis bestätigt!`);
+    }
+
+    function resetBooking() {
+      state.confirmedBooking = null;
+      state.bookingStep = 1;
+      renderApp();
+      refreshBookingModalIfOpen();
+    }
+
+    function openBookingModal() {
+      const modal = document.getElementById('booking-modal');
+      refreshBookingModalContent();
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function refreshBookingModalIfOpen() {
+      const modal = document.getElementById('booking-modal');
+      if (!modal.classList.contains('hidden')) {
+        refreshBookingModalContent();
+      }
+    }
+
+    function refreshBookingModalContent() {
+      const card = document.getElementById('booking-modal-card');
+      card.innerHTML = `
+        <div class="flex items-center justify-between px-5 sm:px-7 py-4 border-b border-[#C86D3B]/25">
+          <div>
+            <span class="font-kupfer-display text-lg sm:text-xl font-bold">Online-Terminbuchung</span>
+            <span class="ml-2 text-xs font-bold text-[#C86D3B]">· ${SALON_CONFIG.ownerLabel}</span>
+          </div>
+          <button type="button" onclick="closeBookingModal()" class="w-8 h-8 flex items-center justify-center font-bold border border-[#241914]/20 rounded-xl hover:bg-[#E9DFD0]">✕</button>
+        </div>
+        <div class="p-4 sm:p-6">
+          ${renderBookingWidgetHTML()}
+        </div>
+      `;
+    }
+
+    function closeBookingModal() {
+      const modal = document.getElementById('booking-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openLightbox(lookId) {
+      const look = LOOKS.find(l => l.id === lookId);
+      if (!look) return;
+      const card = document.getElementById('lightbox-modal-card');
+      card.innerHTML = `
+        <div class="flex items-center justify-between mb-4">
+          <span class="px-3 py-1 text-xs font-bold uppercase bg-[#C86D3B] text-white rounded-xl">${look.tag}</span>
+          <button type="button" onclick="closeLightbox()" class="w-8 h-8 flex items-center justify-center font-bold border border-[#241914]/20 rounded-xl hover:bg-[#E9DFD0]">✕</button>
+        </div>
+        <h3 class="font-kupfer-display text-2xl sm:text-3xl font-bold">${look.title}</h3>
+        <p class="text-sm text-[#5E4D44] mt-3 leading-relaxed">${look.desc}</p>
+        <div class="mt-6 pt-4 border-t border-[#241914]/15 flex items-center justify-between">
+          <span class="text-xs font-bold text-[#C86D3B]">${SALON_CONFIG.ownerLabel}</span>
+          <button type="button" onclick="closeLightbox(); bookSingleService('${look.serviceId}')" class="px-5 py-2.5 text-xs sm:text-sm bg-[#241914] text-[#F4EDE2] hover:bg-[#382720] font-bold rounded-xl">
+            Diesen Look buchen →
+          </button>
+        </div>
+      `;
+      const modal = document.getElementById('lightbox-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeLightbox() {
+      const modal = document.getElementById('lightbox-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function openLegalModal(type) {
+      const title = document.getElementById('legal-modal-title');
+      const body = document.getElementById('legal-modal-body');
+      if (type === 'impressum') {
+        title.textContent = 'Impressum';
+        body.innerHTML = `
+          <p><strong>Angaben gemäß § 5 DDG:</strong><br/>${SALON_CONFIG.legal.providerLine}<br/>${SALON_CONFIG.address}</p>
+          <p><strong>Kontakt:</strong><br/>Telefon: ${SALON_CONFIG.phone}<br/>E-Mail: ${SALON_CONFIG.email}</p>
+          <p><strong>Kammerzugehörigkeit:</strong><br/>${SALON_CONFIG.legal.chamberLine}</p>
+        `;
+      } else {
+        title.textContent = 'Datenschutzerklärung';
+        body.innerHTML = `
+          <p><strong>1. Zweck der Datenverarbeitung</strong><br/>Wir verarbeiten deine Angaben (Name, Kontaktdaten, Terminwunsch) ausschließlich zur Durchführung deiner Online-Terminbuchung gemäß Art. 6 Abs. 1 lit. b DSGVO.</p>
+          <p><strong>2. Keine Weitergabe an Dritte</strong><br/>Deine Daten werden vertraulich behandelt und nicht zu Werbezwecken weitergegeben.</p>
+        `;
+      }
+      const modal = document.getElementById('legal-modal');
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+    }
+
+    function closeLegalModal() {
+      const modal = document.getElementById('legal-modal');
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+    }
+
+    function downloadICS() {
+      const b = state.confirmedBooking;
+      if (!b) return;
+      const d = b.isoDate.replace(/-/g, '');
+      const t = b.time.replace(':', '') + '00';
+      const ics = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'BEGIN:VEVENT',
+        `UID:${b.code}@denis-barbershop.de`,
+        `DTSTART:${d}T${t}`,
+        `SUMMARY:Denis’ Barbershop (${b.summary})`,
+        `DESCRIPTION:Code: ${b.code} | ${SALON_CONFIG.ownerLabel}`,
+        `LOCATION:${SALON_CONFIG.address}`,
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].join('\r\n');
+
+      const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Denis-Barbershop-${b.code}.ics`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Kalender-Eintrag (.ics) heruntergeladen!');
+    }
+
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') {
+        closeBookingModal();
+        closeLightbox();
+        closeLegalModal();
+      }
+    });
+
+    ['booking-modal', 'lightbox-modal', 'legal-modal'].forEach(id => {
+      document.getElementById(id).addEventListener('click', e => {
+        if (e.target.id === id) {
+          closeBookingModal();
+          closeLightbox();
+          closeLegalModal();
+        }
+      });
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      generateCalendarDays();
+      renderApp();
+    });
+  </script>
+</body>
+</html>

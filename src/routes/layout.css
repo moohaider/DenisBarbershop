@@ -1,72 +1,113 @@
 @import 'tailwindcss';
 
 /*
- * Archivo, self-hosted (SIL OFL 1.1, siehe static/fonts/OFL.txt).
- * Eine variable Datei je Zeichensatz deckt alle Schnitte 400–800 ab.
+ * Schriften, self-hosted (SIL OFL 1.1, siehe static/fonts/OFL.txt):
+ * Bodoni Moda für Überschriften und Preise, DM Sans für Text und Bedienelemente.
+ * Stil nach der vom Kunden gewählten Vorlage „Kupfer & Tabak“ (ADR-0005).
  */
 @font-face {
-	font-family: 'Archivo Variable';
+	font-family: 'Bodoni Moda Variable';
 	font-style: normal;
 	font-display: swap;
-	font-weight: 100 900;
-	src: url('/fonts/archivo-latin-ext-wght-normal.woff2') format('woff2-variations');
+	font-weight: 400 900;
+	src: url('/fonts/bodoni-moda-latin-ext-opsz-normal.woff2') format('woff2-variations');
 	unicode-range:
 		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
 		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
 		U+A720-A7FF;
 }
 @font-face {
-	font-family: 'Archivo Variable';
+	font-family: 'Bodoni Moda Variable';
 	font-style: normal;
 	font-display: swap;
-	font-weight: 100 900;
-	src: url('/fonts/archivo-latin-wght-normal.woff2') format('woff2-variations');
+	font-weight: 400 900;
+	src: url('/fonts/bodoni-moda-latin-opsz-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+	font-family: 'Bodoni Moda Variable';
+	font-style: italic;
+	font-display: swap;
+	font-weight: 400 900;
+	src: url('/fonts/bodoni-moda-latin-opsz-italic.woff2') format('woff2-variations');
+	unicode-range:
+		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
+		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+	font-family: 'DM Sans Variable';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 1000;
+	src: url('/fonts/dm-sans-latin-ext-opsz-normal.woff2') format('woff2-variations');
+	unicode-range:
+		U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329,
+		U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+		U+A720-A7FF;
+}
+@font-face {
+	font-family: 'DM Sans Variable';
+	font-style: normal;
+	font-display: swap;
+	font-weight: 100 1000;
+	src: url('/fonts/dm-sans-latin-opsz-normal.woff2') format('woff2-variations');
 	unicode-range:
 		U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329,
 		U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-/* Design-Tokens aus docs/02-ux-und-marketing.md */
+/*
+ * Design-Tokens „Schwarz & Gold“ (ADR-0010, Aufbau weiter nach ADR-0005).
+ * Schwarz und Elfenbein sind leicht abgemildert (Kontrast ~15:1 statt 17:1).
+ * Gold als Fläche immer mit schwarzer Schrift; auf Hell für Schrift die dunkleren Goldtöne.
+ */
 @theme {
-	--color-brg: #004225;
-	--color-ink: #2b2a28;
-	--color-ink-2: #373533;
-	/* Prototyp: #6f6b65. Abgedunkelt, damit Sekundärtext auch auf --raise 4,5:1 erreicht. */
-	--color-muted: #65615b;
-	--color-bg: #f1efeb;
-	--color-surface: #fdfcfa;
-	--color-raise: #e6e3de;
-	--color-line: #d9d5ce;
-	--color-ok: #1e8a4f;
-	--color-cream: #f5f2ec;
+	--color-paper: #f5f3ee; /* Seitenhintergrund, Elfenbein */
+	--color-card: #fdfcf9; /* Karten */
+	--color-chip: #e9e5dc; /* Tabs, sekundäre Buttons */
+	--color-chip-hover: #dedad0;
+	--color-black: #1f1d1a; /* Text und dunkle Bereiche (15,2:1 auf Elfenbein) */
+	--color-black-hover: #35322e;
+	--color-graphite: #5a564f; /* Sekundärtext (6,6:1) */
+	--color-gold: #d4af37; /* Buttons mit schwarzer Schrift, Gold auf Schwarz */
+	--color-gold-hover: #c39e2c;
+	--color-gold-deep: #9c7a22; /* Preise, große Schrift, Linien auf Hell (≥ 3:1) */
+	--color-gold-text: #7a5d14; /* kleine Goldschrift auf Hell (≥ 4,9:1) */
+	--color-ok: #2f8f5b;
 	--color-pole-red: #c8102e;
 	--color-pole-white: #ffffff;
 	--color-pole-blue: #1f3f95;
-	--font-sans: 'Archivo Variable', 'Helvetica Neue', Arial, sans-serif;
-	--radius-card: 14px;
+	/* Aliasse für ältere Komponenten */
+	--color-brg: var(--color-gold);
+	--color-ink: var(--color-black);
+	--color-muted: var(--color-graphite);
+	--color-surface: var(--color-card);
+	--color-raise: var(--color-chip);
+	--color-line: #e2ddd2;
+	--font-sans: 'DM Sans Variable', 'Helvetica Neue', Arial, sans-serif;
+	--font-serif: 'Bodoni Moda Variable', 'Bodoni 72', Didot, Georgia, serif;
+	--radius-card: 16px;
 }
 
-/*
- * Semantische Variablen. Helle Bereiche nutzen die Standardwerte,
- * dunkle Bereiche (.dark) überschreiben sie, wie im Prototyp.
- */
 @layer base {
 	:root {
 		color-scheme: light;
-		--bg: var(--color-bg);
-		--surface: var(--color-surface);
-		--raise: var(--color-raise);
-		--line: var(--color-line);
-		--ink: var(--color-ink);
-		--muted: var(--color-muted);
-		--accent: var(--color-brg);
-		--accent-ink: #ffffff;
+		--bg: var(--color-paper);
+		--surface: var(--color-card);
+		--raise: var(--color-chip);
+		--line: color-mix(in srgb, var(--color-gold-deep) 30%, transparent);
+		--ink: var(--color-black);
+		--muted: var(--color-graphite);
+		--accent: var(--color-gold);
+		--accent-ink: var(--color-black);
+		--accent-text: var(--color-gold-text);
 		--ok: var(--color-ok);
-		--deep: var(--color-brg);
-		--shadow-card: 0 1px 2px rgba(42, 45, 46, 0.05), 0 10px 24px -18px rgba(42, 45, 46, 0.25);
+		--deep: var(--color-black);
 		padding-top: env(safe-area-inset-top);
 		padding-bottom: env(safe-area-inset-bottom);
-		scroll-padding-top: 72px;
+		scroll-padding-top: 88px;
 	}
 
 	/* Die fixierte Mobile-Leiste darf fokussierte Elemente nicht verdecken (WCAG 2.4.11). */
@@ -82,16 +123,17 @@
 		}
 	}
 
+	/* Dunkle Bereiche: Schwarz mit Elfenbeinschrift, Gold als Akzent. */
 	.dark {
-		--bg: var(--color-ink);
-		--surface: var(--color-ink-2);
-		--raise: #42403d;
-		--line: #4d4a46;
-		--ink: var(--color-cream);
-		--muted: #b9b4ab;
-		--accent: var(--color-cream);
-		--accent-ink: var(--color-ink);
-		--ok: #3aa864;
+		--bg: var(--color-black);
+		--surface: #282622;
+		--raise: #312e2a;
+		--line: color-mix(in srgb, var(--color-paper) 16%, transparent);
+		--ink: var(--color-paper);
+		--muted: color-mix(in srgb, var(--color-paper) 78%, var(--color-black));
+		--accent: var(--color-gold);
+		--accent-ink: var(--color-black);
+		--accent-text: var(--color-gold);
 		background: var(--bg);
 		color: var(--ink);
 	}
@@ -100,7 +142,13 @@
 		margin: 0;
 		background: var(--bg);
 		color: var(--ink);
-		font: 16px/1.55 var(--font-sans);
+		font: 16px/1.6 var(--font-sans);
+		-webkit-font-smoothing: antialiased;
+	}
+
+	::selection {
+		background: var(--color-gold);
+		color: var(--color-black);
 	}
 
 	a {
@@ -108,8 +156,8 @@
 	}
 
 	:focus-visible {
-		outline: 2px solid var(--accent);
-		outline-offset: 2px;
+		outline: 2px solid var(--color-gold-deep);
+		outline-offset: 3px;
 	}
 
 	h1,
@@ -117,62 +165,75 @@
 	h3 {
 		text-wrap: balance;
 	}
+
+	h1,
+	h2 {
+		font-family: var(--font-serif);
+		font-optical-sizing: auto;
+		font-weight: 700;
+	}
 }
 
 @layer components {
 	.wrap {
-		max-width: 1080px;
+		max-width: 1280px;
 		margin: 0 auto;
 		padding-left: max(16px, env(safe-area-inset-left, 0px));
 		padding-right: max(16px, env(safe-area-inset-right, 0px));
 	}
-
-	.section {
-		padding-block: 56px;
-		border-top: 1px solid var(--line);
+	@media (min-width: 640px) {
+		.wrap {
+			padding-left: max(32px, env(safe-area-inset-left, 0px));
+			padding-right: max(32px, env(safe-area-inset-right, 0px));
+		}
 	}
 
-	.eyebrow {
+	.section {
+		padding-block: clamp(56px, 7vw, 80px);
+	}
+
+	/* Kleine Rubrik über Überschriften, wie in der Vorlage. */
+	.label {
 		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.14em;
+		font-weight: 700;
+		letter-spacing: 0.2em;
 		text-transform: uppercase;
-		color: var(--accent);
-		margin: 0 0 6px;
+		color: var(--accent-text);
+		margin: 0;
 	}
 
 	.h2 {
-		font-weight: 700;
-		font-size: clamp(30px, 4.4vw, 44px);
-		line-height: 1.08;
-		letter-spacing: -0.02em;
-		margin: 0;
+		font-size: clamp(30px, 3.6vw, 40px);
+		line-height: 1.12;
+		margin: 8px 0 0;
 	}
 
 	.sub {
 		color: var(--muted);
 		max-width: 60ch;
-		margin: 12px 0 0;
+		margin: 10px 0 0;
+		font-size: 15px;
 	}
 
 	.section-head {
-		margin-bottom: 28px;
+		margin-bottom: 36px;
+		max-width: 680px;
 	}
 
 	.card {
 		background: var(--surface);
+		border: 1px solid var(--line);
 		border-radius: var(--radius-card);
-		box-shadow: var(--shadow-card);
 	}
 
-	/* Buttons: voll abgerundet, primär BRG mit Weiß */
+	/* Buttons wie in der Vorlage: kräftig, leicht abgerundet. */
 	.btn {
-		font: 600 16px var(--font-sans);
+		font: 700 15px/1.2 var(--font-sans);
 		border: 0;
-		border-radius: 999px;
-		padding: 13px 24px;
-		min-height: 44px;
-		background: var(--accent);
+		border-radius: 12px;
+		padding: 13px 22px;
+		min-height: 48px;
+		background: var(--color-gold);
 		color: var(--accent-ink);
 		cursor: pointer;
 		text-decoration: none;
@@ -181,36 +242,49 @@
 		justify-content: center;
 		gap: 8px;
 		white-space: nowrap;
+		transition: background-color 0.15s;
 	}
 	.btn:hover {
-		filter: brightness(1.08);
+		background: var(--color-gold-hover);
+	}
+	.btn-dark {
+		background: var(--color-black);
+		color: var(--color-paper);
+	}
+	.btn-dark:hover {
+		background: var(--color-black-hover);
+	}
+	.btn-soft {
+		background: var(--color-chip);
+		color: var(--color-black);
+		font-weight: 600;
+	}
+	.btn-soft:hover {
+		background: var(--color-chip-hover);
 	}
 	.btn-sm {
-		padding: 9px 16px;
-		font-size: 14px;
+		padding: 9px 15px;
+		min-height: 44px;
+		font-size: 13px;
 	}
 	.btn-lg {
-		padding: 16px 28px;
-		font-size: 18px;
+		padding: 16px 26px;
+		min-height: 56px;
+		font-size: 16px;
 	}
+	/* Alter Name, bleibt für Komponenten wie die Zwei-Klick-Einbettung. */
 	.btn-ghost {
-		background: transparent;
-		color: var(--ink);
-		border: 1px solid var(--line);
+		background: var(--color-chip);
+		color: var(--color-black);
+		font-weight: 600;
 	}
 	.btn-ghost:hover {
-		border-color: var(--accent);
-		filter: none;
-	}
-	.dark .btn:not(.btn-ghost) {
-		background: var(--deep);
-		color: #fff;
-		box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+		background: var(--color-chip-hover);
 	}
 
 	.dot {
-		width: 8px;
-		height: 8px;
+		width: 9px;
+		height: 9px;
 		border-radius: 50%;
 		background: var(--ok);
 		flex: 0 0 auto;

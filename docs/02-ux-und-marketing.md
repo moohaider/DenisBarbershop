@@ -69,24 +69,27 @@ Regeln:
 
 ## Design-Tokens
 
+Aufbau nach der Vorlage des Kunden „Kupfer & Tabak“ (`docs/adr/0005-stil-kupfer-und-tabak.md`), Farben Schwarz und Gold (`docs/adr/0010-farben-schwarz-und-gold.md`). Umsetzung: `src/routes/layout.css`.
+
 ```css
---brg:        #004225;  /* British Racing Green – Akzent, Buttons, Kopfleiste */
---ink:        #2b2a28;  /* warmes Dunkelgrau – Text, dunkle Bereiche */
---ink-2:      #373533;  /* Flächen in dunklen Bereichen */
---muted:      #65615b;  /* Sekundärtext (Prototyp: #6f6b65, abgedunkelt für 4,5:1 auf --raise) */
---bg:         #f1efeb;  /* warmes Hellgrau – Seitenhintergrund */
---surface:    #fdfcfa;  /* Karten */
---raise:      #e6e3de;  /* Platzhalter, Chips */
---line:       #d9d5ce;  /* Linien */
---ok:         #1e8a4f;  /* Status „frei/geöffnet“ */
---pole-red:   #c8102e; --pole-white: #ffffff; --pole-blue: #1f3f95; /* animierte Barber-Pole-Leiste */
+--color-paper:     #f5f3ee;  /* Seitenhintergrund, Elfenbein */
+--color-card:      #fdfcf9;  /* Karten */
+--color-chip:      #e9e5dc;  /* Tabs, sekundäre Buttons */
+--color-black:     #1f1d1a;  /* Text, dunkle Säule, Fußzeile (15,2:1, bewusst kein reines Schwarz) */
+--color-graphite:  #5a564f;  /* Sekundärtext (6,6:1) */
+--color-gold:      #d4af37;  /* Buttons mit schwarzer Schrift, Gold auf Schwarz */
+--color-gold-deep: #9c7a22;  /* Preise, große Schrift, Linien auf Hell (≥ 3:1) */
+--color-gold-text: #7a5d14;  /* kleine Goldschrift auf Hell (≥ 4,9:1) */
+--color-pole-red: #c8102e; --color-pole-white: #ffffff; --color-pole-blue: #1f3f95; /* Barber-Pole-Leiste */
 ```
 
-- Schrift: **Archivo** (Google Fonts, self-hosted als WOFF2), 400/500/600/700/800.
-- Buttons: voll abgerundet (`999px`), primär BRG mit Weiß. In der BRG-Kopfleiste primär cremeweiß mit BRG-Schrift.
-- Dunkle Bereiche (Hero, Stammkunden, Footer, mobile Leiste): `--ink` als Hintergrund, Text cremeweiß, **keine** Mint-/Hellgrün-Töne, keine Verläufe.
-- Animierte Barber-Pole-Leiste (Rot/Weiß/Blau) oben, respektiert `prefers-reduced-motion`.
-- Kontrast: mindestens 4,5:1 für Text, 3:1 für UI-Elemente.
+- Schriften: **Bodoni Moda** (Überschriften, Preise, kursiv im Logo) und **DM Sans** (Text), beide self-hosted als WOFF2.
+- Aufbau: Magazin-Ansicht mit dunkler, mitlaufender Säule links und Leistungskarten rechts, wie in der Vorlage.
+- Buttons: 12 px Radius, primär Gold mit schwarzer Schrift, sekundär Schwarz oder Chip.
+- Kleine Rubriken in Großbuchstaben mit Sperrung über Überschriften (aus der Vorlage).
+- Keine erfundenen Bewertungen, Noten oder „Beliebt“-Abzeichen.
+- Animierte Barber-Pole-Leiste oben, respektiert `prefers-reduced-motion`.
+- Kontrast: mindestens 4,5:1 für Text, 3:1 für große Schrift und UI-Elemente.
 
 ## Texte (Tonalität)
 

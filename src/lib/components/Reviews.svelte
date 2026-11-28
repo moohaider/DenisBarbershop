@@ -4,105 +4,59 @@
 </script>
 
 <!-- Keine Bewertungen erfinden: bis zur Google-Anbindung (Phase 2) nur gekennzeichnete Platzhalter. -->
-<section class="section" id="bewertungen" aria-labelledby="reviews-title">
-	<div class="wrap">
-		<div class="top">
-			<div>
-				<p class="eyebrow">{reviews.eyebrow}</p>
-				<h2 class="h2" id="reviews-title">{reviews.title}</h2>
-			</div>
-			<div class="score">
-				<span class="num" aria-hidden="true">–</span>
-				<div>
-					<span class="stars" aria-hidden="true">★★★★★</span>
-					<small>{reviews.countLabel}</small>
-				</div>
-			</div>
-		</div>
-		<div class="revs">
-			{#each reviews.placeholders as text (text)}
-				<div class="rev">
-					<b>{reviews.placeholderTitle}</b>
-					<p>{text}</p>
-				</div>
-			{/each}
-		</div>
-		<div class="actions">
-			<a class="btn" href={business.googleMapsUrl} target="_blank" rel="external noopener">
-				{reviews.write}
-			</a>
-			<a
-				class="btn btn-ghost"
-				href={business.googleMapsUrl}
-				target="_blank"
-				rel="external noopener"
-			>
-				{reviews.all}
-			</a>
-		</div>
+<div class="reviews" id="bewertungen">
+	<p class="label">{reviews.label}</p>
+	<h2 class="h2">{reviews.title}</h2>
+	<ul>
+		{#each reviews.placeholders as title (title)}
+			<li class="card">
+				<b>{title}</b>
+				<p>{reviews.placeholderText}</p>
+			</li>
+		{/each}
+	</ul>
+	<div class="actions">
+		<a class="btn btn-sm" href={business.googleMapsUrl} target="_blank" rel="external noopener">
+			{reviews.write}
+		</a>
+		<a
+			class="btn btn-sm btn-soft"
+			href={business.googleMapsUrl}
+			target="_blank"
+			rel="external noopener"
+		>
+			{reviews.all}
+		</a>
 	</div>
-</section>
+</div>
 
 <style>
-	.top {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 16px 28px;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: 22px;
-	}
-	.score {
-		display: flex;
-		align-items: center;
+	ul {
+		margin: 20px 0 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
 		gap: 14px;
 	}
-	.num {
-		font-weight: 800;
-		font-size: 56px;
-		line-height: 1;
-		color: var(--accent);
-	}
-	.stars {
-		color: var(--line);
-		font-size: 22px;
-		letter-spacing: 2px;
-	}
-	.score small {
-		display: block;
-		color: var(--muted);
-	}
-	.revs {
+	li {
+		padding: 20px;
+		border-style: dashed;
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-		gap: 14px;
+		gap: 6px;
 	}
-	.rev {
-		border-radius: var(--radius-card);
-		padding: 18px;
-		display: grid;
-		gap: 8px;
-		align-content: start;
-		background: var(--raise);
-		border: 1px dashed color-mix(in srgb, var(--muted) 45%, transparent);
-		color: var(--muted);
+	b {
+		font-size: 14px;
 	}
-	.rev b {
-		color: var(--ink);
-	}
-	.rev p {
+	li p {
 		margin: 0;
-		font-size: 15px;
+		font-size: 14px;
+		line-height: 1.6;
+		color: var(--muted);
 	}
 	.actions {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 10px;
-		margin-top: 20px;
-	}
-	@media (max-width: 760px) {
-		.revs {
-			grid-template-columns: 1fr;
-		}
+		margin-top: 18px;
 	}
 </style>

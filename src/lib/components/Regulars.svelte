@@ -4,61 +4,79 @@
 	import WhatsAppPreview from './WhatsAppPreview.svelte';
 </script>
 
-<section class="section loyal dark" aria-labelledby="regulars-title">
-	<div class="wrap grid">
-		<div>
-			<p class="eyebrow">{regulars.eyebrow}</p>
-			<h2 class="h2" id="regulars-title">{regulars.title}</h2>
-			<ul>
-				{#each regulars.benefits as benefit (benefit)}
-					<li>{benefit}</li>
-				{/each}
-			</ul>
-			<BookButton class="btn">{regulars.action}</BookButton>
-			<p class="hint">{regulars.hint}</p>
+<section class="section" aria-labelledby="regulars-title">
+	<div class="wrap">
+		<div class="panel dark">
+			<div>
+				<p class="label">{regulars.label}</p>
+				<h2 class="h2" id="regulars-title">{regulars.title}</h2>
+				<ul>
+					{#each regulars.benefits as benefit (benefit)}
+						<li>{benefit}</li>
+					{/each}
+				</ul>
+				<BookButton class="btn btn-lg">{regulars.action}</BookButton>
+			</div>
+			<div class="preview">
+				<WhatsAppPreview />
+				<p class="hint">{regulars.hint}</p>
+			</div>
 		</div>
-		<WhatsAppPreview />
 	</div>
 </section>
 
 <style>
-	.grid {
+	.panel {
+		border-radius: var(--radius-card);
+		border: 1px solid color-mix(in srgb, var(--color-gold-deep) 45%, transparent);
+		padding: clamp(28px, 5vw, 56px);
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 300px);
-		gap: 36px;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 320px);
+		gap: 40px 64px;
 		align-items: center;
 	}
+	.label {
+		color: var(--color-gold);
+		letter-spacing: 0.25em;
+	}
 	ul {
-		margin: 16px 0 22px;
+		margin: 24px 0 28px;
 		padding: 0;
+		list-style: none;
 		display: grid;
-		gap: 10px;
+		gap: 12px;
+		max-width: 52ch;
 	}
 	li {
-		list-style: none;
-		display: flex;
-		gap: 10px;
-		align-items: flex-start;
+		position: relative;
+		padding-left: 22px;
+		color: var(--muted);
+		font-size: 15px;
 	}
 	li::before {
 		content: '';
-		width: 18px;
-		height: 18px;
-		flex: 0 0 auto;
-		margin-top: 3px;
+		position: absolute;
+		left: 0;
+		top: 0.6em;
+		width: 8px;
+		height: 8px;
 		border-radius: 50%;
-		background: var(--accent);
-		mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M9 0a9 9 0 100 18A9 9 0 009 0zM7.6 12.9L4 9.3l1.3-1.3 2.3 2.3 5-5L14 6.6z'/%3E%3C/svg%3E")
-			center / contain no-repeat;
+		background: var(--color-gold);
+	}
+	.preview {
+		display: grid;
+		gap: 12px;
+		justify-items: center;
 	}
 	.hint {
-		color: var(--muted);
+		margin: 0;
 		font-size: 13px;
-		margin: 14px 0 0;
+		color: var(--muted);
+		text-align: center;
 	}
-	@media (max-width: 760px) {
-		.grid {
-			grid-template-columns: 1fr;
+	@media (max-width: 860px) {
+		.panel {
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>

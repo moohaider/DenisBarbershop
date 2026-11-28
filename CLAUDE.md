@@ -17,7 +17,8 @@ Ziel der Website, in dieser Reihenfolge:
 | `docs/03-architektur.md` | Stack, Ordnerstruktur, Datenmodell, API, Integrationen, Slot-Logik |
 | `docs/04-qualitaet.md` | Tests, CI, Sicherheit, Barrierefreiheit, Performance, DSGVO |
 | `docs/05-roadmap.md` | Phasen mit Akzeptanzkriterien und offene Punkte |
-| `docs/design/prototyp.html` | Freigegebener visueller Entwurf (Referenz für Look & Texte) |
+| `docs/design/vorlage-kupfer-tabak.html` | Vom Kunden gewählte Designvorlage: maßgeblich für Aufbau und Typografie (ADR-0005). Farben: Schwarz und Gold (ADR-0010) |
+| `docs/design/prototyp.html` | Älterer Entwurf, nur noch Referenz für Inhalte und Buchungsablauf |
 
 Wenn eine Anforderung in den Docs fehlt oder widersprüchlich ist: nachfragen, nicht raten. Getroffene Entscheidungen in `docs/adr/` als kurzen ADR festhalten.
 
@@ -26,9 +27,9 @@ Wenn eine Anforderung in den Docs fehlt oder widersprüchlich ist: nachfragen, n
 - **SvelteKit 3 + Svelte 5 (Runes)** (siehe ADR-0002), TypeScript `strict`, `@sveltejs/adapter-cloudflare`, Deployment auf **Cloudflare Workers**
 - **Cloudflare D1** (SQLite) mit **Drizzle ORM** und Drizzle-Migrationen
 - **Tailwind CSS v4** mit den Design-Tokens aus `docs/02-ux-und-marketing.md`
-- **Resend** (E-Mail), **WhatsApp Cloud API** (Kunden), **Telegram Bot API** (Benachrichtigung an Denis)
+- **Brevo** (E-Mail, Pflichtkanal, ADR-0009), **WhatsApp Cloud API** (Zusatzkanal, ADR-0006), **Telegram Bot API** (Benachrichtigung an Denis)
 - **Cloudflare Turnstile** (Bot-Schutz), **Cloudflare Access** (Schutz von `/admin`)
-- **Cron Triggers** für Erinnerungen, Warteliste, Bewertungs-Sync und Datenlöschung
+- **Ein Cron Trigger** alle 5 Minuten, Fälligkeit der Jobs nach Ortszeit im Code (ADR-0007)
 - Tests: **Vitest** (Unit/Integration, `@cloudflare/vitest-pool-workers` für D1), **Playwright** (E2E + axe)
 
 ## Befehle
@@ -36,7 +37,7 @@ Wenn eine Anforderung in den Docs fehlt oder widersprüchlich ist: nachfragen, n
 ```bash
 npm run dev            # Vite-Dev-Server
 npm run preview        # Build + wrangler dev (echte Workers-Runtime, lokale D1)
-npm run deploy         # Build + wrangler deploy (normalerweise über Workers Builds)
+npm run deploy         # Build + wrangler deploy (normalerweise automatisch, ADR-0003 bzw. ab Phase 1 ADR-0008)
 npm run check          # svelte-check + tsc
 npm run lint           # ESLint + Prettier --check
 npm run test           # Vitest
@@ -76,3 +77,16 @@ Imports aus `src/lib` laufen über `#lib/...` mit Dateiendung, z. B. `import { b
 - Keine Tracking- oder Analytics-Skripte ohne Rücksprache (DSGVO, Cookie-Banner vermeiden).
 - Keine Instagram-, TikTok- oder Google-Inhalte ohne vorherigen Klick des Besuchers laden (Zwei-Klick-Lösung).
 - Keine neuen Abhängigkeiten ohne kurze Begründung im PR bzw. Commit.
+
+## Projekt-Skills
+
+In `.claude/skills/`. Nutze sie, statt die Abläufe frei nachzubauen:
+
+| Skill | Wann |
+|---|---|
+| `leistung-aendern` | Preise, Leistungen oder Dauern ändern sich |
+| `design-check` | nach sichtbaren Änderungen, Maßstab ist die Kundenvorlage |
+| `release` | prüfen, committen, pushen (= Deployment), Live-Kontrolle |
+| `datenschutz-check` | neuer Dienst, neues Formularfeld, Einbettung, Speicherung |
+| `adr` | eine Entscheidung festhalten |
+| `zeit` | Arbeitszeit exportieren |

@@ -2,6 +2,7 @@
 	import type { Snippet } from 'svelte';
 	import { resolve } from '$app/paths';
 	import { business } from '#lib/content/business.ts';
+	import { brand, legal } from '#lib/content/home.ts';
 	import Pole from './Pole.svelte';
 
 	let { title, children }: { title: string; children: Snippet } = $props();
@@ -13,26 +14,53 @@
 </svelte:head>
 
 <Pole />
-<div class="top dark">
-	<div class="wrap"><a class="brand" href={resolve('/')}>{business.name}</a></div>
+<div class="top">
+	<div class="wrap">
+		<a class="brand" href={resolve('/')}><span>{brand.first}</span> <em>{brand.second}</em></a>
+	</div>
 </div>
 <main class="wrap legal">
 	<h1>{title}</h1>
 	{@render children()}
-	<p><a href={resolve('/')}>Zurück zur Startseite</a></p>
+	<p class="back"><a href={resolve('/')}>{legal.back}</a></p>
 </main>
 
 <style>
 	.top {
-		background: var(--deep);
+		border-bottom: 1px solid var(--line);
 	}
 	.top .wrap {
-		padding-block: 14px;
+		display: flex;
+		align-items: center;
+		min-height: 80px;
 	}
 	.brand {
+		font-family: var(--font-serif);
+		font-optical-sizing: auto;
 		font-weight: 700;
-		font-size: 22px;
+		font-size: clamp(22px, 2.6vw, 30px);
+		line-height: 1;
+		letter-spacing: 0.01em;
 		text-decoration: none;
+		padding-block: 11px;
+	}
+	.brand span {
+		text-transform: uppercase;
+	}
+	.brand em {
+		color: var(--color-gold-deep);
+		letter-spacing: 0;
+	}
+	.back {
+		margin-top: 40px;
+	}
+	.back a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		font-weight: 700;
+		color: var(--accent-text);
+		text-underline-offset: 4px;
 	}
 	.legal {
 		max-width: 760px;
@@ -52,8 +80,8 @@
 		max-width: 70ch;
 	}
 	.legal :global(.todo) {
-		background: #fff3cd;
-		color: #5c4400;
+		background: color-mix(in srgb, var(--color-gold) 30%, var(--color-paper));
+		color: var(--color-black);
 		border-radius: 4px;
 		padding: 0 4px;
 	}

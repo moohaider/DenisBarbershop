@@ -58,23 +58,23 @@
 		width: min(560px, calc(100vw - 32px));
 		max-width: 100vw;
 		max-height: min(92dvh, 780px);
-		border-radius: 18px;
+		border-radius: 16px;
 		margin: auto;
 		flex-direction: column;
 		overflow: hidden;
-		box-shadow: 0 0 0 1px var(--line);
+		border: 1px solid color-mix(in srgb, var(--color-gold-deep) 40%, transparent);
 	}
 	dialog[open] {
 		display: flex;
 	}
 	dialog::backdrop {
-		background: rgba(42, 45, 46, 0.55);
+		background: rgba(0, 0, 0, 0.75);
 	}
 	@media (max-width: 640px) {
 		dialog {
 			width: 100vw;
 			margin: auto 0 0;
-			border-radius: 18px 18px 0 0;
+			border-radius: 16px 16px 0 0;
 			max-height: 94dvh;
 		}
 	}
@@ -98,8 +98,10 @@
 		border-bottom: 1px solid var(--line);
 	}
 	.head strong {
-		font-size: 26px;
-		font-weight: 700;
+		font-family: var(--font-serif);
+		font-optical-sizing: auto;
+		font-size: 28px;
+		font-weight: 600;
 		line-height: 1;
 	}
 	.x {

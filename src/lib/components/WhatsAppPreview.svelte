@@ -40,7 +40,7 @@
 		--raise: var(--color-raise);
 		--line: var(--color-line);
 		--accent: var(--color-brg);
-		--accent-ink: #fff;
+		--accent-ink: var(--color-black);
 		color: var(--ink);
 		border: 8px solid #171614;
 		border-radius: 30px;
@@ -111,7 +111,7 @@
 	.qr button {
 		font: 600 14px var(--font-sans);
 		background: #fff;
-		color: var(--color-brg);
+		color: var(--color-gold-text);
 		border: 0;
 		border-radius: 10px;
 		padding: 9px;

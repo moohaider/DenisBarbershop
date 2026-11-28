@@ -1,116 +1,119 @@
 <script lang="ts">
+	import { addressLine, business } from '#lib/content/business.ts';
 	import { hero } from '#lib/content/home.ts';
 	import BookButton from './BookButton.svelte';
-	import PhotoPlaceholder from './PhotoPlaceholder.svelte';
+	import OpenStatus from './OpenStatus.svelte';
 </script>
 
-<header class="hero dark" id="start">
-	<div class="wrap grid">
-		<div>
-			<h1>{hero.titleStart} <em>{hero.titleEmphasis}</em></h1>
-			<p class="lead">{hero.lead}</p>
-			<div class="cta">
-				<BookButton class="btn btn-lg">{hero.primary}</BookButton>
-				<a class="btn btn-lg btn-ghost" href="#leistungen">{hero.secondary}</a>
+<!-- Linke dunkle Säule der Magazin-Ansicht (Vorlage „Kupfer & Tabak“). -->
+<header class="pillar-wrap" id="start">
+	<div class="pillar dark">
+		<p class="label">{hero.label}</p>
+		<h1>
+			<span class="line">{hero.titleStart}</span>
+			<span class="line">{hero.titleEmphasis}</span>
+		</h1>
+		<p class="lead">{hero.lead}</p>
+		<dl class="rows">
+			<div>
+				<dt>{hero.rows.barber}</dt>
+				<dd class="gold">{hero.rows.barberValue}</dd>
 			</div>
-			<BookButton class="slot">
-				<span class="dot dot-pulse"></span>
-				<span>{hero.pillText} · <b>{hero.pillAction}</b></span>
-			</BookButton>
-			<div class="facts">
-				{#each hero.facts as fact (fact.title)}
-					<div><b>{fact.title}</b>{fact.text}</div>
-				{/each}
+			<div>
+				<dt>{hero.rows.status}</dt>
+				<dd><OpenStatus /></dd>
 			</div>
-		</div>
-		<PhotoPlaceholder class="hero-photo" title={hero.photo.title} text={hero.photo.text} />
+			<div>
+				<dt>{hero.rows.prices}</dt>
+				<dd class="gold">{hero.rows.pricesValue}</dd>
+			</div>
+			<div>
+				<dt>{hero.rows.place}</dt>
+				<dd>{addressLine}</dd>
+			</div>
+		</dl>
+		<BookButton class="btn btn-lg cta">{hero.primary}</BookButton>
+		<p class="note">
+			{hero.note}
+			<a href="tel:{business.phoneE164}">{business.phoneDisplay}</a>
+		</p>
 	</div>
 </header>
 
 <style>
-	.grid {
+	.pillar {
+		border-radius: var(--radius-card);
+		border: 1px solid color-mix(in srgb, var(--color-gold-deep) 45%, transparent);
+		padding: clamp(28px, 4vw, 40px);
 		display: grid;
-		grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-		gap: 40px;
-		align-items: center;
-		padding-block: 56px 48px;
+		gap: 22px;
+		box-shadow: 0 24px 50px -30px rgba(36, 25, 20, 0.55);
+	}
+	@media (min-width: 1024px) {
+		.pillar {
+			position: sticky;
+			top: 112px;
+		}
+	}
+	.label {
+		color: var(--color-gold);
+		letter-spacing: 0.25em;
+	}
+	@media (max-width: 430px) {
+		.label {
+			letter-spacing: 0.12em;
+		}
 	}
 	h1 {
-		font-weight: 800;
-		font-size: clamp(42px, 7vw, 80px);
-		line-height: 1;
-		letter-spacing: -0.03em;
+		font-size: clamp(40px, 4.4vw, 54px);
+		line-height: 1.08;
 		margin: 0;
 	}
-	h1 em {
-		font-style: normal;
-		background: var(--deep);
-		color: #fff;
-		padding: 0 0.14em;
-		border-radius: 0.12em;
-		-webkit-box-decoration-break: clone;
-		box-decoration-break: clone;
+	.line {
+		display: block;
 	}
 	.lead {
+		margin: 0;
+		font-size: 15px;
+		line-height: 1.7;
 		color: var(--muted);
-		font-size: 18px;
-		max-width: 46ch;
-		margin: 18px 0 0;
 	}
-	.cta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 12px;
-		margin-top: 26px;
-	}
-	.grid :global(.slot) {
-		margin-top: 16px;
-		display: inline-flex;
-		align-items: center;
-		gap: 10px;
-		font: 500 15px var(--font-sans);
-		color: var(--ink);
-		background: var(--surface);
-		border: 1px solid var(--line);
-		border-radius: 999px;
-		padding: 9px 16px;
-		min-height: 44px;
-		text-decoration: none;
-	}
-	.grid :global(.slot:hover) {
-		border-color: var(--accent);
-	}
-	.grid :global(.slot b) {
-		color: var(--accent);
-		font-weight: 600;
-	}
-	.facts {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 8px 26px;
-		margin-top: 30px;
-		padding-top: 18px;
+	.rows {
+		margin: 0;
+		padding-top: 14px;
 		border-top: 1px solid var(--line);
+		display: grid;
+		gap: 12px;
+		font-size: 13px;
+	}
+	.rows div {
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+	}
+	dt {
 		color: var(--muted);
-		font-size: 14px;
 	}
-	.facts b {
-		display: block;
+	dd {
+		margin: 0;
+		font-weight: 700;
+		text-align: right;
+	}
+	.gold {
+		color: var(--color-gold);
+	}
+	.pillar :global(.cta) {
+		width: 100%;
+	}
+	.note {
+		margin: -6px 0 0;
+		font-size: 13px;
+		color: var(--muted);
+		text-align: center;
+	}
+	.note a {
 		color: var(--ink);
-		font-size: 16px;
-		font-weight: 600;
-	}
-	.grid :global(.hero-photo) {
-		aspect-ratio: 4 / 5;
-	}
-	@media (max-width: 860px) {
-		.grid {
-			grid-template-columns: 1fr;
-			gap: 28px;
-			padding-block: 36px;
-		}
-		.grid :global(.hero-photo) {
-			aspect-ratio: 16 / 11;
-		}
+		font-weight: 700;
+		white-space: nowrap;
 	}
 </style>

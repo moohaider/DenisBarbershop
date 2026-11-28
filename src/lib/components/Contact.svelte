@@ -1,12 +1,28 @@
 <script lang="ts">
-	import { addressLine, business } from '#lib/content/business.ts';
+	import { onMount } from 'svelte';
+	import { addressLine, business, openingHours } from '#lib/content/business.ts';
 	import { contact } from '#lib/content/home.ts';
-	import OpenStatus from './OpenStatus.svelte';
-	import PhotoPlaceholder from './PhotoPlaceholder.svelte';
+	import { toLocalTime } from '#lib/domain/opening.ts';
+	import Reviews from './Reviews.svelte';
+
+	const days = [
+		[1, 'Montag'],
+		[2, 'Dienstag'],
+		[3, 'Mittwoch'],
+		[4, 'Donnerstag'],
+		[5, 'Freitag'],
+		[6, 'Samstag'],
+		[7, 'Sonntag']
+	] as const;
+	const clock = (m: number) =>
+		`${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`;
+
+	// Der heutige Tag wird im Browser bestimmt, damit gecachte Seiten stimmen.
+	let today = $state(0);
+	onMount(() => (today = toLocalTime(new Date()).weekday));
 
 	let copied = $state(false);
 	let telEl: HTMLElement | undefined = $state();
-
 	async function copyPhone() {
 		try {
 			await navigator.clipboard.writeText(business.phoneDisplay);
@@ -31,36 +47,19 @@
 </script>
 
 <section class="section" id="kontakt" aria-labelledby="contact-title">
-	<div class="wrap">
-		<div class="section-head">
-			<p class="eyebrow">{contact.eyebrow}</p>
+	<div class="wrap grid">
+		<Reviews />
+
+		<div>
+			<p class="label">{contact.label}</p>
 			<h2 class="h2" id="contact-title">{contact.title}</h2>
-		</div>
-		<div class="contact">
-			<div class="list">
-				<div><OpenStatus /></div>
+			<div class="card box">
 				<div>
 					<h3>{contact.address}</h3>
-					<p>{addressLine}</p>
-					<div class="route inline">
-						<a
-							class="btn btn-ghost btn-sm"
-							href={business.routeUrl}
-							target="_blank"
-							rel="external noopener"
-						>
-							{contact.route}
-						</a>
-					</div>
-				</div>
-				<div>
-					<h3>{contact.hoursTitle}</h3>
-					<dl class="hours">
-						{#each contact.hours as row (row.days)}
-							<dt>{row.days}</dt>
-							<dd>{row.time}</dd>
-						{/each}
-					</dl>
+					<p class="strong">{addressLine}</p>
+					<a class="link" href={business.routeUrl} target="_blank" rel="external noopener">
+						{contact.route}
+					</a>
 				</div>
 				<div>
 					<h3>{contact.phone}</h3>
@@ -70,7 +69,7 @@
 						</a>
 						<button
 							type="button"
-							class="btn btn-ghost btn-sm"
+							class="btn btn-sm btn-soft"
 							onclick={copyPhone}
 							aria-live="polite"
 						>
@@ -78,82 +77,112 @@
 						</button>
 					</div>
 				</div>
+				<div class="hours">
+					<h3>{contact.hoursTitle}</h3>
+					<ul>
+						{#each days as [n, name] (n)}
+							{@const h = openingHours[n]}
+							<li class:today={today === n}>
+								<span>{name} {today === n ? contact.today : ''}</span>
+								<span>{h ? `${clock(h.opens)} – ${clock(h.closes)}` : contact.closed}</span>
+							</li>
+						{/each}
+					</ul>
+				</div>
 				<div>
 					<h3>{contact.social}</h3>
 					<div class="inline">
 						{#each socials as s (s.label)}
-							<a class="btn btn-ghost btn-sm" href={s.url} target="_blank" rel="external noopener">
+							<a class="btn btn-sm btn-soft" href={s.url} target="_blank" rel="external noopener">
 								{s.label}
 							</a>
 						{/each}
 					</div>
 				</div>
 			</div>
-			<PhotoPlaceholder
-				class="map"
-				icon="pin"
-				title={contact.mapPhoto.title}
-				text={contact.mapPhoto.text}
-			/>
 		</div>
 	</div>
 </section>
 
 <style>
-	.contact {
+	.grid {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-		gap: 28px;
+		grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+		gap: 40px;
+		align-items: start;
 	}
-	.contact :global(.map) {
-		min-height: 260px;
-	}
-	.list {
+	.box {
+		margin-top: 20px;
+		padding: 24px;
 		display: grid;
-		gap: 20px;
-		align-content: start;
+		gap: 18px;
+	}
+	.box > div + div {
+		padding-top: 16px;
+		border-top: 1px solid color-mix(in srgb, var(--color-black) 12%, transparent);
 	}
 	h3 {
 		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.12em;
+		font-weight: 700;
+		letter-spacing: 0.08em;
 		text-transform: uppercase;
 		color: var(--muted);
 		margin: 0 0 4px;
 	}
-	p {
+	.strong {
 		margin: 0;
-		font-size: 17px;
+		font-weight: 700;
 	}
-	.hours {
-		display: grid;
-		grid-template-columns: auto 1fr;
-		gap: 2px 18px;
-		font-variant-numeric: tabular-nums;
-		font-size: 17px;
-		margin: 0;
+	.link {
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--accent-text);
+		text-decoration: none;
 	}
-	dd {
-		margin: 0;
-	}
-	.route {
-		margin-top: 8px;
+	.link:hover {
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 	.inline {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 10px;
 		align-items: center;
+		gap: 10px 14px;
 	}
 	.tel {
-		font-size: 20px;
-		font-weight: 600;
-		font-variant-numeric: tabular-nums;
+		font-weight: 700;
+		color: var(--accent-text);
 		text-decoration: none;
+		font-size: 17px;
+		font-variant-numeric: tabular-nums;
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
 	}
-	@media (max-width: 760px) {
-		.contact {
-			grid-template-columns: 1fr;
+	.hours ul {
+		margin: 6px 0 0;
+		padding: 0;
+		list-style: none;
+		display: grid;
+		gap: 6px;
+		font-size: 14px;
+	}
+	.hours li {
+		display: flex;
+		justify-content: space-between;
+		gap: 12px;
+		font-variant-numeric: tabular-nums;
+	}
+	.hours li.today {
+		font-weight: 700;
+		color: var(--accent-text);
+	}
+	@media (max-width: 1024px) {
+		.grid {
+			grid-template-columns: minmax(0, 1fr);
 		}
 	}
 </style>

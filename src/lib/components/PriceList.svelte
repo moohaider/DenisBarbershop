@@ -5,121 +5,156 @@
 	import BookButton from './BookButton.svelte';
 
 	let filter = $state<Category | 'all'>('all');
-	// Filter-Chips erst mit JavaScript zeigen; ohne JS ist immer die ganze Liste sichtbar.
+	// Filter erst mit JavaScript zeigen; ohne JS ist immer die ganze Liste sichtbar.
 	let enhanced = $state(false);
 	onMount(() => (enhanced = true));
 
-	const visible = $derived(categories.filter((c) => filter === 'all' || filter === c));
+	const visible = $derived(services.filter((s) => filter === 'all' || s.category === filter));
 </script>
 
-<section class="section" id="leistungen" aria-labelledby="prices-title">
-	<div class="wrap">
-		<div class="section-head">
-			<p class="eyebrow">{prices.eyebrow}</p>
+<!-- Rechte Spalte der Magazin-Ansicht: das Leistungsverzeichnis. -->
+<section class="menu" id="leistungen" aria-labelledby="prices-title">
+	<div class="head">
+		<div>
+			<p class="label">{prices.label}</p>
 			<h2 class="h2" id="prices-title">{prices.title}</h2>
-			<p class="sub">{prices.sub}</p>
 		</div>
-
 		{#if enhanced}
-			<div class="chips" role="group" aria-label={prices.filterLabel}>
+			<div class="tabs" role="group" aria-label={prices.filterLabel}>
 				{#each ['all' as const, ...categories] as c (c)}
-					<button
-						type="button"
-						class="chip"
-						aria-pressed={filter === c}
-						onclick={() => (filter = c)}
-					>
+					<button type="button" aria-pressed={filter === c} onclick={() => (filter = c)}>
 						{c === 'all' ? prices.all : c}
 					</button>
 				{/each}
 			</div>
 		{/if}
-
-		{#each visible as category (category)}
-			<h3 class="cat">{category}</h3>
-			<ul>
-				{#each services.filter((s) => s.category === category) as s (s.id)}
-					<li class="row">
-						<b>{s.name}</b>
-						<small>{s.durationMin} Min.</small>
-						<span class="price">{formatPrice(s.priceCents)}</span>
-						<BookButton class="btn btn-sm btn-ghost" label="{s.name} anfragen">
-							{prices.action}
-						</BookButton>
-					</li>
-				{/each}
-			</ul>
-		{/each}
 	</div>
+
+	<ul>
+		{#each visible as s (s.id)}
+			<li class="card">
+				<div class="top">
+					<h3>{s.name}</h3>
+					<span class="price">{formatPrice(s.priceCents)}</span>
+				</div>
+				<p class="meta">{prices.duration} {s.durationMin} Min. <span>{s.category}</span></p>
+				<p class="desc">{s.description}</p>
+				<div class="foot">
+					<BookButton class="link" label="{s.name}: {prices.action}">{prices.action}</BookButton>
+				</div>
+			</li>
+		{/each}
+	</ul>
 </section>
 
 <style>
-	.chips {
+	.head {
 		display: flex;
-		gap: 8px;
-		overflow-x: auto;
-		padding: 2px 2px 6px;
-		margin-bottom: 10px;
-		scrollbar-width: none;
+		flex-wrap: wrap;
+		align-items: flex-end;
+		justify-content: space-between;
+		gap: 16px;
+		margin-bottom: 24px;
 	}
-	.chip {
-		flex: 0 0 auto;
-		font: 500 14px var(--font-sans);
-		color: var(--muted);
-		background: transparent;
-		border: 1px solid var(--line);
-		border-radius: 999px;
+	.tabs {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 6px;
+	}
+	.tabs button {
+		font: 600 12px var(--font-sans);
+		border: 0;
+		border-radius: 12px;
 		padding: 8px 14px;
 		min-height: 44px;
+		background: var(--color-chip);
+		color: var(--color-black);
 		cursor: pointer;
 	}
-	.chip[aria-pressed='true'] {
-		background: var(--accent);
-		color: var(--accent-ink);
-		border-color: var(--accent);
-		font-weight: 600;
+	.tabs button:hover {
+		background: var(--color-chip-hover);
 	}
-	.cat {
-		font-size: 12px;
-		font-weight: 600;
-		letter-spacing: 0.12em;
-		text-transform: uppercase;
-		color: var(--accent);
-		padding: 22px 0 4px;
-		margin: 0;
+	.tabs button[aria-pressed='true'] {
+		background: var(--color-gold);
+		color: var(--accent-ink);
+		font-weight: 700;
 	}
 	ul {
 		margin: 0;
 		padding: 0;
 		list-style: none;
-	}
-	.row {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) auto auto;
-		gap: 4px 16px;
-		align-items: center;
-		padding-block: 13px;
-		border-bottom: 1px solid var(--line);
+		gap: 14px;
 	}
-	.row b {
-		font-weight: 600;
-		font-size: 17px;
+	li {
+		padding: clamp(18px, 2.4vw, 24px);
+		display: grid;
+		gap: 8px;
+		transition: border-color 0.15s;
 	}
-	.row small {
-		color: var(--muted);
-		grid-column: 1;
-		font-size: 14px;
+	li:hover {
+		border-color: color-mix(in srgb, var(--color-gold-deep) 70%, transparent);
+	}
+	.top {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-start;
+		gap: 12px;
+	}
+	h3 {
+		font-family: var(--font-serif);
+		font-optical-sizing: auto;
+		font-weight: 700;
+		font-size: clamp(18px, 1.8vw, 21px);
+		line-height: 1.25;
+		margin: 0;
 	}
 	.price {
-		font-variant-numeric: tabular-nums;
+		font-family: var(--font-serif);
+		font-optical-sizing: auto;
 		font-weight: 700;
-		font-size: 18px;
-		color: var(--accent);
-		grid-row: 1 / 3;
-		grid-column: 2;
+		font-size: 21px;
+		line-height: 1.2;
+		color: var(--color-gold-deep);
+		white-space: nowrap;
+		flex: 0 0 auto;
 	}
-	.row :global(.btn) {
-		grid-row: 1 / 3;
-		grid-column: 3;
+	.meta {
+		margin: 0;
+		font-size: 12px;
+		color: var(--muted);
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px 10px;
+	}
+	.meta span {
+		font-weight: 600;
+	}
+	.desc {
+		margin: 0;
+		font-size: 14px;
+		line-height: 1.6;
+		color: var(--muted);
+		max-width: 60ch;
+	}
+	.foot {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: 6px;
+		border-top: 1px solid var(--line);
+	}
+	.foot :global(.link) {
+		font-size: 13px;
+		font-weight: 700;
+		color: var(--accent-text);
+		text-decoration: none;
+		padding: 6px 0 0;
+		display: inline-flex;
+		align-items: center;
+		min-height: 44px;
+	}
+	.foot :global(.link:hover) {
+		text-decoration: underline;
+		text-underline-offset: 3px;
 	}
 </style>

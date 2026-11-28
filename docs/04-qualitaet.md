@@ -21,7 +21,7 @@ Bei jedem Push/PR:
 4. `npm run test:e2e` gegen `wrangler dev` mit lokaler D1 und Fake-Integrationen
 5. Lighthouse CI (Budgets unten)
 
-Auf `main`: Migrationen `remote` anwenden, danach `wrangler deploy`. Preview-Deployments für PRs.
+Auf `main`: Migrationen `remote` anwenden, danach `wrangler deploy` (ADR-0008). Bis zur ersten Migration deployt Workers Builds (ADR-0003).
 
 ## Performance-Budgets
 - Lighthouse Mobile: Performance ≥ 95, Accessibility 100, Best Practices 100, SEO 100.
@@ -46,7 +46,7 @@ Auf `main`: Migrationen `remote` anwenden, danach `wrangler deploy`. Preview-Dep
 > Keine Rechtsberatung. Vor dem Launch Impressum und Datenschutzerklärung prüfen lassen.
 
 - **Rechtsgrundlagen:** Buchung, Bestätigung, Erinnerung = Vertragserfüllung (Art. 6 Abs. 1 lit. b). WhatsApp, „nächster Schnitt“, Bewertungsbitte = **Einwilligung** (Checkbox, nicht vorausgewählt außer WhatsApp bei Warteliste – prüfen), jederzeit widerrufbar per Link.
-- **Auftragsverarbeitung (AVV):** Cloudflare, Resend, Meta (WhatsApp Business), Google, ggf. Stripe. Telegram: kein AVV → keine Kundendaten an Telegram.
+- **Auftragsverarbeitung (AVV):** Cloudflare, Brevo, Meta (WhatsApp Business), Google, ggf. Stripe. Telegram: kein AVV → keine Kundendaten an Telegram.
 - **Datensparsamkeit:** Nur Name, E-Mail, optional Telefon. Keine Geburtsdaten, keine Freitexte im Buchungsformular.
 - **Löschfristen:** Termine und Wartelisten-Einträge 12 Monate nach dem Termin anonymisieren. Inaktive Kunden ohne Konto nach 24 Monaten löschen. Konto-Löschung sofort auf Wunsch.
 - **Externe Inhalte:** Instagram, TikTok, Google Maps nur nach Klick (Zwei-Klick-Lösung). Bewertungen werden serverseitig geladen und ausgeliefert (keine Google-Requests aus dem Browser).

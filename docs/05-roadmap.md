@@ -13,10 +13,12 @@ Jede Phase endet mit grüner CI, Deployment und einem kurzen Test durch Denis.
 
 ## Phase 1 – MVP Buchung
 - [ ] Datenmodell + Migrationen + Seed (Leistungen, Öffnungszeiten, Mittwochs-Regel)
+- [ ] Deploy-Job in der CI, Workers Builds trennen (ADR-0008)
+- [ ] Prüfen, ob `@cloudflare/vitest-pool-workers` mit Vitest 5 läuft
 - [ ] Slot-Berechnung (rein, getestet) und `/api/slots`
 - [ ] Buchungs-Sheet (4 Schritte) + No-JS-Fallback
 - [ ] Doppelbuchungs-Schutz über `booking_slot`
-- [ ] Bestätigungsmail (Resend) mit .ics und Absage-Link, `/termin/[token]`
+- [ ] Bestätigungsmail (Brevo, ADR-0009) mit .ics und Absage-Link, `/termin/[token]`
 - [ ] Telegram an Denis bei Buchung und Absage
 - [ ] Admin: Tagesansicht, Termin anlegen/absagen, Sperrzeiten
 - [ ] Turnstile, Security-Header, Rate-Limit
@@ -25,15 +27,15 @@ Jede Phase endet mit grüner CI, Deployment und einem kurzen Test durch Denis.
 
 ## Phase 2 – Warteliste, Erinnerungen, Bewertungen
 - [ ] Warteliste (Mo/Di/Do/Fr/Sa) mit Zeitfenstern
-- [ ] WhatsApp Cloud API: Konto, Nummer, Templates (Erinnerung, Platz frei) freigeben lassen
-- [ ] Erinnerung am Vortag mit „Ich komme“/„Absagen“, Webhook
+- [ ] Erinnerung am Vortag per E-Mail mit „Ich komme“/„Absagen“ (ADR-0006)
 - [ ] Wartelisten-Angebot „Wer zuerst bestätigt“
 - [ ] Google-Bewertungen per Cron + JSON-LD `aggregateRating`
 - [ ] Bewertungsbitte (Opt-in)
 - [ ] Instagram/TikTok-Einbettungen per Zwei-Klick
 - [ ] Anonyme Funnel-Zähler
+- [ ] Zusatzkanal WhatsApp (ADR-0006): Konto, Nummer, Templates (Erinnerung, Platz frei) freigeben lassen, Webhook
 
-**Fertig wenn:** Absage per WhatsApp gibt den Slot frei und die Warteliste erhält innerhalb von 1 Minute ein Angebot.
+**Fertig wenn:** Absage per E-Mail-Link gibt den Slot frei und die Warteliste erhält innerhalb von 1 Minute ein Angebot. WhatsApp ist dafür nicht nötig.
 
 ## Phase 3 – Bindung und Verbindlichkeit
 - [ ] Kundenkonto mit Magic Link, „Wie letztes Mal“, Opt-ins verwalten, Daten löschen
@@ -59,4 +61,5 @@ Bewusst **nicht** geplant: Login mit Google/Apple, digitale Stempelkarte, Foto-U
 | Impressumsangaben (Name, Rechtsform, USt-IdNr.) | Denis |
 | Eigene Nummer für WhatsApp Business | Denis |
 | Absenderadresse für Mails (`termine@…`) | Mo |
+| Brevo-Konto anlegen, AVV abschließen, Unterauftragsverarbeiter und Logo im Free-Plan prüfen (ADR-0009) | Mo |
 | Cloudflare Web Analytics oder eigene Zähler | Mo (ADR) |

@@ -1,6 +1,6 @@
 # ADR-0003: Deployment über Cloudflare Workers Builds
 
-- Status: angenommen
+- Status: angenommen, ab Phase 1 ersetzt durch ADR-0008
 - Datum: 2026-11-22
 
 ## Kontext

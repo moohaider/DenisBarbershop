@@ -7,7 +7,7 @@ Browser ──► Cloudflare Worker (SvelteKit, SSR + Form Actions + API)
                  │
                  ├── D1 (Daten)
                  ├── Cron Triggers (Erinnerungen, Warteliste, Sync, Löschfristen)
-                 ├── Resend (E-Mail)
+                 ├── Brevo (E-Mail)
                  ├── WhatsApp Cloud API (Kunden) ◄── Webhook (Button-Antworten)
                  ├── Telegram Bot API (Denis)    ◄── Webhook (Inline-Buttons)
                  ├── Google Places API (Bewertungen, 1×/Tag)
@@ -32,7 +32,7 @@ src/
         noshow.ts         # Regeln für Anzahlung/Sperre
         time.ts           # Europe/Berlin <-> UTC, Raster
       repo/               # Drizzle-Zugriffe (bookings, customers, waitlist, …)
-      integrations/       # resend.ts, whatsapp.ts, telegram.ts, google.ts, turnstile.ts (+ Fakes)
+      integrations/       # brevo.ts, whatsapp.ts, telegram.ts, google.ts, turnstile.ts (+ Fakes)
       jobs/               # Cron-Jobs, jeweils idempotent
       auth/               # Access-JWT-Prüfung, Tokens (HMAC)
       db/schema.ts        # Drizzle-Schema
@@ -108,8 +108,8 @@ metric_daily     (day, key, count, PRIMARY KEY (day, key))                    --
 
 | Dienst | Zweck | Hinweise |
 |---|---|---|
-| Resend | Transaktionsmails | Absender `termine@denis-barbershop.de`, Domain per DNS (SPF/DKIM auf Subdomain) verifizieren. Templates in `src/lib/content/mail/`. |
-| WhatsApp Cloud API | Erinnerung, Warteliste | Eigene Nummer, Meta-Business-Konto, freigegebene Templates mit Quick-Reply-Buttons. Webhook mit Signaturprüfung (`X-Hub-Signature-256`). |
+| Brevo (ADR-0009) | Transaktionsmails | Absender `termine@denis-barbershop.de`, Domain per DNS (SPF/DKIM/DMARC) verifizieren. Secret `BREVO_API_KEY`. Templates in `src/lib/content/mail/`. |
+| WhatsApp Cloud API | Erinnerung, Warteliste (Zusatzkanal, ADR-0006) | Eigene Nummer, Meta-Business-Konto, freigegebene Templates mit Quick-Reply-Buttons. Webhook mit Signaturprüfung (`X-Hub-Signature-256`). |
 | Telegram Bot API | Denis | Nur Denis' Chat-ID erlaubt. Inline-Buttons „Öffnen“. Keine Kundennamen. |
 | Google Places API (New) | Bewertungen | Place Details 1×/Tag per Cron, Feldmaske nur `rating,userRatingCount,reviews`. Attribution „Bewertungen von Google“ anzeigen. |
 | Turnstile | Bot-Schutz | Unsichtbar im Buchungsformular, serverseitig prüfen. |
@@ -118,12 +118,14 @@ metric_daily     (day, key, count, PRIMARY KEY (day, key))                    --
 
 Alle Integrationen implementieren ein Interface und haben einen **Fake** für Tests und lokale Entwicklung (`INTEGRATIONS=fake` in `.dev.vars`).
 
-## Cron-Jobs (`wrangler.toml` → `[triggers] crons`)
+## Cron-Jobs
 
-| Zeit (UTC, an MEZ/MESZ angepasst) | Job |
+Ein einziger Trigger alle 5 Minuten (`wrangler.jsonc` → `triggers.crons: ["*/5 * * * *"]`). Welche Jobs fällig sind, entscheidet die reine Funktion `dueJobs()` nach Ortszeit `Europe/Berlin` (ADR-0007).
+
+| Fällig (Ortszeit) | Job |
 |---|---|
 | alle 5 min | abgelaufene Wartelisten-Angebote schließen, nächste Kandidaten benachrichtigen |
-| täglich 17:00 lokal | Erinnerungen für morgen |
+| täglich ab 18:00 | Erinnerungen für morgen (Uhrzeit laut `docs/01-produkt.md`) |
 | stündlich | Bewertungsbitten (2 h nach Termin, Opt-in) |
 | täglich 03:00 lokal | „Zeit für den nächsten Schnitt“, Google-Sync, Löschfristen |
 

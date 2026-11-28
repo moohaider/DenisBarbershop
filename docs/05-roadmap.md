@@ -9,6 +9,9 @@ Jede Phase endet mit grüner CI, Deployment und einem kurzen Test durch Denis.
 - [ ] Echte Fotos, TikTok-Handle, Google Place ID
 - [x] Startseite aus dem Prototyp in Svelte-Komponenten übertragen (ohne Buchung)
 
+- [x] Vorschau-Schutz bis zum Start: Platzhalter „Bald online“, echte Seite nach Login unter `/vorschau` (ADR-0011)
+- [ ] Zum Start: Vorschau-Schutz entfernen (Schritte in ADR-0011)
+
 **Fertig wenn:** Lighthouse-Budgets erreicht, axe ohne Fehler, Seite live unter `denis-barbershop.de`.
 
 ## Phase 1 – MVP Buchung

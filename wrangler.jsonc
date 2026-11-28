@@ -8,6 +8,9 @@
 		"binding": "ASSETS",
 		"directory": ".svelte-kit/cloudflare"
 	},
+	// Vorschau-Schutz bis zum Start (ADR-0011). Zum Start auf "false" setzen.
+	// Das Passwort ist ein Secret: npx wrangler secret put PREVIEW_PASSWORD
+	"vars": { "SITE_LOCKED": "true" },
 	"observability": { "enabled": true },
 	"workers_dev": true,
 	"preview_urls": true

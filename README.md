@@ -35,3 +35,11 @@ Cloudflare Workers Builds, verbunden mit diesem Repo, deployt jeden Push auf `ma
 | Root directory | `/`                   |
 
 Die Domain `denis-barbershop.de` wird im Cloudflare-Dashboard unter _Workers → denis-barbershop → Settings → Domains & Routes_ als Custom Domain hinzugefügt.
+
+### Vorschau-Schutz bis zum Start
+
+Bis zum Start sehen Besucher nur „Bald online“ (ADR-0011). Die echte Seite gibt es nach dem Login unter `/vorschau`.
+
+- Passwort einmalig setzen: `npx wrangler secret put PREVIEW_PASSWORD` oder im Dashboard unter _Settings → Variables and Secrets_ als **Secret**.
+- Lokal steht das Passwort in `.dev.vars` (nicht im Repo): `PREVIEW_PASSWORD=…`.
+- Abmelden: `/vorschau/abmelden`.
